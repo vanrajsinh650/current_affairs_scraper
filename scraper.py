@@ -59,69 +59,77 @@ def extract_questions(soup: BeautifulSoup) -> List[Dict]:
     questions_data = []
     
     try:
-        # Find main content area - try different selectors
-        content = soup.find('div', class_='col-md-8')
+        # Find all question containers
+        question_blocks = soup.find_all('div', class_='bix-div-container')
         
-        if not content:
-            content = soup.find('section', class_='section')
-        
-        if not content:
-            # Last resort: get main wrapper
-            content = soup.find('main', class_='main-wrapper')
-        
-        if not content:
-            logger.warning("No content div found on page")
+        if not question_blocks:
+            logger.warning("No question blocks found on page")
             return questions_data
         
-        # Find all paragraphs and headings
-        all_elements = content.find_all(['p', 'h3', 'h4', 'h5'])
+        logger.info(f"Found {len(question_blocks)} question blocks")
         
-        current_question = None
-        question_num = 0
-        
-        for elem in all_elements:
-            text = elem.get_text(strip=True)
-            
-            # Skip empty or very short text
-            if not text or len(text) < 10:
-                continue
-            
-            # Check if this is a question (ends with ?)
-            if '?' in text and len(text) > 20 and not text.startswith('Answer') and not text.startswith('Why'):
-                # Save previous question if exists
-                if current_question and current_question.get('question'):
-                    questions_data.append(current_question)
+        for idx, block in enumerate(question_blocks, 1):
+            try:
+                # Extract question number and text
+                q_num_div = block.find('div', class_='bix-td-qno')
+                q_text_div = block.find('div', class_='bix-td-qtxt')
                 
-                # Start new question
-                question_num += 1
-                current_question = {
-                    'question_no': question_num,
-                    'question': text,
-                    'options': [],
-                    'answer': 'Not available',
-                    'explanation': '',
-                    'category': ''
+                if not q_text_div:
+                    continue
+                
+                question_text = q_text_div.get_text(strip=True)
+                
+                # Extract options
+                options = []
+                option_container = block.find('div', class_='bix-tbl-options')
+                if option_container:
+                    option_divs = option_container.find_all('div', class_='bix-td-option-val')
+                    for opt_div in option_divs:
+                        opt_text = opt_div.get_text(strip=True)
+                        if opt_text:
+                            options.append(opt_text)
+                
+                # Extract answer - it's in a hidden input
+                answer = "Not available"
+                answer_input = block.find('input', class_='jq-hdnakq')
+                if answer_input:
+                    answer_value = answer_input.get('value', '')
+                    # Answer is like "A", "B", "C", "D"
+                    if answer_value and len(options) >= ord(answer_value) - ord('A') + 1:
+                        answer_index = ord(answer_value) - ord('A')
+                        answer = f"Option {answer_value}: {options[answer_index]}"
+                    else:
+                        answer = f"Option {answer_value}"
+                
+                # Extract explanation
+                explanation = ""
+                exp_div = block.find('div', class_='bix-ans-description')
+                if exp_div:
+                    explanation = exp_div.get_text(strip=True)
+                
+                # Extract category
+                category = ""
+                cat_link = block.find('div', class_='explain-link')
+                if cat_link:
+                    cat_a = cat_link.find('a')
+                    if cat_a:
+                        category = cat_a.get_text(strip=True)
+                
+                question_data = {
+                    'question_no': idx,
+                    'question': question_text,
+                    'options': options,
+                    'answer': answer,
+                    'explanation': explanation,
+                    'category': category
                 }
-                logger.info(f"Found question {question_num}: {text[:60]}...")
-            
-            # Check for Answer
-            elif text.startswith('Answer:') and current_question:
-                answer_text = text.replace('Answer:', '').strip()
-                current_question['answer'] = answer_text if answer_text else 'Not available'
-            
-            # Check for Explanation
-            elif text.startswith('Explanation:') and current_question:
-                explanation = text.replace('Explanation:', '').strip()
-                current_question['explanation'] = explanation
-            
-            # Check for Category
-            elif text.startswith('Category :') and current_question:
-                category = text.replace('Category :', '').strip()
-                current_question['category'] = category
-        
-        # Add the last question
-        if current_question and current_question.get('question'):
-            questions_data.append(current_question)
+                
+                questions_data.append(question_data)
+                logger.info(f"Extracted Q{idx}: {question_text[:60]}...")
+                
+            except Exception as e:
+                logger.error(f"Error extracting question {idx}: {str(e)}")
+                continue
         
         logger.info(f"Total questions extracted: {len(questions_data)}")
         return questions_data
@@ -150,6 +158,7 @@ def scrape_date_wise(date_obj, session: requests.Session) -> List[Dict]:
     
     questions = extract_questions(soup)
     
+    # Add date metadata to each question
     for question in questions:
         question['date'] = date_obj.strftime('%Y-%m-%d')
     
@@ -158,7 +167,6 @@ def scrape_date_wise(date_obj, session: requests.Session) -> List[Dict]:
 
 
 def scrape_weekly_questions(dates: List) -> List[Dict]:
-    """Scrape questions for the entire week"""
     all_questions = []
     session = create_session()
     
@@ -175,7 +183,6 @@ def scrape_weekly_questions(dates: List) -> List[Dict]:
 if __name__ == "__main__":
     from config import get_date_range
     
-    # Get dates
     dates = get_date_range()
     
     print("\n" + "="*60)
@@ -187,7 +194,6 @@ if __name__ == "__main__":
     
     print("\nStarting scraper...\n")
     
-    # Scrape questions
     questions = scrape_weekly_questions(dates)
     
     print("\n" + "="*60)
@@ -196,14 +202,10 @@ if __name__ == "__main__":
     print(f"Total questions scraped: {len(questions)}")
     
     if questions:
-        print(f"\nSample question:")
-        print(f"Q: {questions[0]['question'][:100]}...")
+        print(f"\nSUCCESS! Sample question:")
+        print(f"Q: {questions[0]['question'][:80]}...")
         print(f"Answer: {questions[0]['answer']}")
         print(f"Category: {questions[0].get('category', 'N/A')}")
         print(f"Date: {questions[0].get('date', 'N/A')}")
     else:
-        print("\nNo questions found. Possible reasons:")
-        print("   - IndiaBix hasn't published questions for these dates yet")
-        print("   - HTML structure has changed")
-        print("   - Network issues")
-        print("\nTip: Run debug_html.py to inspect the page structure")
+        print("\nNo questions found.")
