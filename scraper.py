@@ -19,7 +19,7 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-def create_sessions() -> requests.Session:
+def create_session() -> requests.Session:
     """Create a requests session with retry strategy"""
     session = requests.Session()
 
