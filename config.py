@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 BASE_URL = "https://www.indiabix.com"
 CURRENT_AFFAIRS_URL = f"{BASE_URL}/current-affairs/questions-and-answers/"
 
-# Request headers to avoide 402 error
+# Request headers to avoid 403 errors
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
@@ -14,8 +14,8 @@ HEADERS = {
 
 # Retry configuration
 MAX_RETRIES = 3
-RETRY_DELAY = 2 # 2 Seconds
-TIMEOUT = 30 # Seconds
+RETRY_DELAY = 2  # seconds
+TIMEOUT = 30  # seconds
 
 # PDF configuration
 PDF_OUTPUT_DIR = "output"
@@ -23,20 +23,27 @@ PDF_FONT_SIZE = 12
 PDF_TITLE_FONT_SIZE = 16
 
 # Scheduler configuration
-SCHEDULE_DAY = "sun" # RUN every sunday
-SCHEDULE_HOUR =  23
+SCHEDULE_DAY = "sun"  # Run every Sunday
+SCHEDULE_HOUR = 23
 SCHEDULE_MINUTE = 59
 
-# Data calculation - get last 7 days sunday to saturday
+# How many days to scrape backwards
+DAYS_TO_SCRAPE = 7
+
+
 def get_date_range():
-    todey = datetime.now()
-    # Find last sunday ( 0 = Monday, 6 = Sunday in weekday())
-    days_since_sunday = (todey.weekday() + 1) % 7
-    last_sunday = todey - timedelta(days=days_since_sunday)
-
+    """
+    Calculate the date range for PAST 7 days from today (going backwards)
+    
+    Example: If today is Dec 28, 2025:
+    - Returns: [Dec 28, Dec 27, Dec 26, Dec 25, Dec 24, Dec 23, Dec 22]
+    """
+    today = datetime.now()
     dates = []
-    for i in range(7):
-        date = last_sunday + timedelta(days=i)
+    
+    # Go backwards from today for DAYS_TO_SCRAPE days
+    for i in range(DAYS_TO_SCRAPE):
+        date = today - timedelta(days=i)
         dates.append(date)
-
+    
     return dates
