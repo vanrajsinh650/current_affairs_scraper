@@ -1,0 +1,60 @@
+2025-12-28 16:20:21,557 - INFO - Starting weekly scrape for 7 days
+2025-12-28 16:20:21,557 - INFO - Scraping for date: 2025-12-28
+2025-12-28 16:20:21,557 - INFO - Fetching: https://www.indiabix.com/current-affairs/questions-and-answers/2025/december/28/
+2025-12-28 16:20:22,091 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/questions-and-answers/2025/december/28/
+2025-12-28 16:20:22,093 - WARNING - No questions found on page
+2025-12-28 16:20:23,094 - INFO - Scraping for date: 2025-12-29
+2025-12-28 16:20:23,094 - INFO - Fetching: https://www.indiabix.com/current-affairs/questions-and-answers/2025/december/29/
+2025-12-28 16:20:23,208 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/questions-and-answers/2025/december/29/
+2025-12-28 16:20:23,212 - WARNING - No questions found on page
+2025-12-28 16:20:24,213 - INFO - Scraping for date: 2025-12-30
+2025-12-28 16:20:24,213 - INFO - Fetching: https://www.indiabix.com/current-affairs/questions-and-answers/2025/december/30/
+2025-12-28 16:20:24,297 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/questions-and-answers/2025/december/30/
+2025-12-28 16:20:24,299 - WARNING - No questions found on page
+2025-12-28 16:20:25,300 - INFO - Scraping for date: 2025-12-31
+2025-12-28 16:20:25,300 - INFO - Fetching: https://www.indiabix.com/current-affairs/questions-and-answers/2025/december/31/
+2025-12-28 16:20:25,408 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/questions-and-answers/2025/december/31/
+2025-12-28 16:20:25,410 - WARNING - No questions found on page
+2025-12-28 16:20:26,411 - INFO - Scraping for date: 2026-01-01
+2025-12-28 16:20:26,411 - INFO - Fetching: https://www.indiabix.com/current-affairs/questions-and-answers/2026/january/1/
+2025-12-28 16:20:26,519 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/questions-and-answers/2026/january/1/
+2025-12-28 16:20:26,521 - WARNING - No questions found on page
+2025-12-28 16:20:27,521 - INFO - Scraping for date: 2026-01-02
+2025-12-28 16:20:27,522 - INFO - Fetching: https://www.indiabix.com/current-affairs/questions-and-answers/2026/january/2/
+2025-12-28 16:20:27,653 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/questions-and-answers/2026/january/2/
+2025-12-28 16:20:27,655 - WARNING - No questions found on page
+2025-12-28 16:20:28,655 - INFO - Scraping for date: 2026-01-03
+2025-12-28 16:20:28,656 - INFO - Fetching: https://www.indiabix.com/current-affairs/questions-and-answers/2026/january/3/
+2025-12-28 16:20:28,746 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/questions-and-answers/2026/january/3/
+2025-12-28 16:20:28,748 - WARNING - No questions found on page
+2025-12-28 16:20:29,749 - INFO - Weekly scrape complete. Total questions: 0
+2025-12-28 16:29:07,708 - INFO - Starting weekly scrape for 7 days
+2025-12-28 16:29:07,709 - INFO - Scraping for date: 2025-12-28
+2025-12-28 16:29:07,709 - INFO - Fetching: https://www.indiabix.com/current-affairs/2025-12-28
+2025-12-28 16:29:08,313 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/2025-12-28
+2025-12-28 16:29:08,317 - WARNING - No questions found on page
+2025-12-28 16:29:09,318 - INFO - Scraping for date: 2025-12-29
+2025-12-28 16:29:09,318 - INFO - Fetching: https://www.indiabix.com/current-affairs/2025-12-29
+2025-12-28 16:29:09,574 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/2025-12-29
+2025-12-28 16:29:09,578 - WARNING - No questions found on page
+2025-12-28 16:29:10,578 - INFO - Scraping for date: 2025-12-30
+2025-12-28 16:29:10,579 - INFO - Fetching: https://www.indiabix.com/current-affairs/2025-12-30
+2025-12-28 16:29:10,852 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/2025-12-30
+2025-12-28 16:29:10,856 - WARNING - No questions found on page
+2025-12-28 16:29:11,856 - INFO - Scraping for date: 2025-12-31
+2025-12-28 16:29:11,857 - INFO - Fetching: https://www.indiabix.com/current-affairs/2025-12-31
+2025-12-28 16:29:12,377 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/2025-12-31
+2025-12-28 16:29:12,380 - WARNING - No questions found on page
+2025-12-28 16:29:13,381 - INFO - Scraping for date: 2026-01-01
+2025-12-28 16:29:13,381 - INFO - Fetching: https://www.indiabix.com/current-affairs/2026-01-01
+2025-12-28 16:29:13,814 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/2026-01-01
+2025-12-28 16:29:13,820 - WARNING - No questions found on page
+2025-12-28 16:29:14,820 - INFO - Scraping for date: 2026-01-02
+2025-12-28 16:29:14,820 - INFO - Fetching: https://www.indiabix.com/current-affairs/2026-01-02
+2025-12-28 16:29:15,100 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/2026-01-02
+2025-12-28 16:29:15,104 - WARNING - No questions found on page
+2025-12-28 16:29:16,105 - INFO - Scraping for date: 2026-01-03
+2025-12-28 16:29:16,105 - INFO - Fetching: https://www.indiabix.com/current-affairs/2026-01-03
+2025-12-28 16:29:16,577 - INFO - Successfully fetched: https://www.indiabix.com/current-affairs/2026-01-03
+2025-12-28 16:29:16,581 - WARNING - No questions found on page
+2025-12-28 16:29:17,581 - INFO - Weekly scrape complete. Total questions: 0
