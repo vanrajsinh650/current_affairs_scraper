@@ -28,7 +28,7 @@ SCHEDULE_HOUR =  23
 SCHEDULE_MINUTE = 59
 
 # Data calculation - get last 7 days sunday to saturday
-def get_data_range():
+def get_date_range():
     todey = datetime.now()
     # Find last sunday ( 0 = Monday, 6 = Sunday in weekday())
     days_since_sunday = (todey.weekday() + 1) % 7
