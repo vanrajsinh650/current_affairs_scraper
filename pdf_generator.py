@@ -15,9 +15,10 @@ logger = logging.getLogger(__name__)
 class PDFGenerator:
     """Generate PDF from scraped current affairs questions"""
     
-    def __init__(self, output_dir: str = "output"):
+    def __init__(self, output_dir: str = "output", language: str = 'gu'):
         """Initialize PDF generator"""
         self.output_dir = output_dir
+        self.language = language
         self.styles = getSampleStyleSheet()
         self._setup_custom_styles()
         
