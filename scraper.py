@@ -181,35 +181,26 @@ def scrape_weekly_questions(dates: List) -> List[Dict]:
     return all_questions
 
 def translate_questions_to_gujarati(questions: List[Dict]) -> List[Dict]:
-    """Translate all questions to Gujarati, skip failed ones"""
+    """Translate all questions to Gujarati"""
     from translator import Translator
     
-    logger.info(f"Starting translation of {len(questions)} questions to Gujarati...")
-    translator = Translator(max_retries=3)
+    logger.info(f"Starting translation of {len(questions)} questions...")
+    translator = Translator(max_retries=2)
     
     translated_questions = []
-    skipped_count = 0
     
     for i, question in enumerate(questions, 1):
         try:
             translated_q = translator.translate_question(question)
+            translated_questions.append(translated_q)
             
-            if translated_q is None:
-                # Translation failed after 3 retries - skip this question
-                logger.warning(f"Skipping question {i} after failed translation")
-                skipped_count += 1
-            else:
-                translated_questions.append(translated_q)
-            
-            if i % 10 == 0:
-                logger.info(f"Translated {i}/{len(questions)} questions (skipped: {skipped_count})")
-                print(f"   Translating... {i}/{len(questions)} done (skipped: {skipped_count})")
+            if i % 5 == 0:
+                logger.info(f"Translated {i}/{len(questions)} questions")
+                print(f"   Translating... {i}/{len(questions)} done")
         
         except Exception as e:
             logger.error(f"Failed to translate question {i}: {e}")
-            skipped_count += 1
+            translated_questions.append(question)  # Keep original if fails
     
-    logger.info(f"Translation complete: {len(translated_questions)} questions translated, {skipped_count} skipped")
-    print(f"\n✓ Translation complete: {len(translated_questions)} translated, {skipped_count} skipped")
-    
+    logger.info(f"Translation complete: {len(translated_questions)} questions")
     return translated_questions

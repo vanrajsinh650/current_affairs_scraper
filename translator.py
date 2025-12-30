@@ -1,4 +1,4 @@
-import translators as ts
+from deep_translator import GoogleTranslator
 import logging
 import time
 
@@ -6,92 +6,72 @@ logger = logging.getLogger(__name__)
 
 
 class Translator:
-    """Handle translation of text to Gujarati using free APIs"""
+    """Handle translation using Deep Translator (free, no API key)"""
     
-    def __init__(self, max_retries: int = 3):
+    def __init__(self, max_retries: int = 2):
         self.max_retries = max_retries
-        logger.info(f"Translator initialized (max retries: {max_retries})")
+        self.translator = GoogleTranslator(source='en', target='gu')
+        logger.info("Deep Translator initialized (free, no API key needed)")
     
-    def translate(self, text: str, target_language: str = 'gu') -> str:
-        """Translate text with retry logic"""
+    def translate(self, text: str) -> str:
+        """Translate text to Gujarati"""
         if not text or not text.strip():
             return text
         
-        # Try translating with retries
+        # Split long text into chunks (Google Translate limit: 5000 chars)
+        if len(text) > 4500:
+            logger.warning(f"Text too long ({len(text)} chars), truncating...")
+            text = text[:4500]
+        
+        # Try translation with retries
         for attempt in range(1, self.max_retries + 1):
             try:
-                translated = ts.translate_text(
-                    query_text=text,
-                    translator='google',
-                    from_language='en',
-                    to_language=target_language
-                )
-                
-                logger.debug(f"Translated: {text[:50]}... -> {translated[:50]}...")
-                time.sleep(0.1)
-                
+                translated = self.translator.translate(text)
+                logger.debug(f"Translated: {text[:50]}...")
+                time.sleep(0.3)  # Small delay to avoid rate limit
                 return translated
                 
             except Exception as e:
                 if attempt < self.max_retries:
-                    logger.warning(f"Translation attempt {attempt} failed for '{text[:50]}...': {e}")
-                    logger.info(f"Retrying... ({attempt}/{self.max_retries})")
-                    time.sleep(1)  # Wait before retry
+                    logger.warning(f"Attempt {attempt} failed, retrying...")
+                    time.sleep(1)
                 else:
-                    logger.error(f"Translation failed after {self.max_retries} attempts for '{text[:50]}...': {e}")
-                    return None  # Return None to mark as failed
+                    logger.error(f"Translation failed: {str(e)[:100]}")
+                    return text  # Return original text if translation fails
         
-        return None
+        return text
     
     def translate_question(self, question: dict) -> dict:
-        """Translate question with retry logic, return None if critical parts fail"""
+        """Translate entire question"""
         translated = question.copy()
         
         logger.info(f"Translating question {question.get('question_no', '?')}")
         
-        # Translate question text (critical)
-        if 'question' in question:
-            translated_q = self.translate(question['question'])
-            if translated_q is None:
-                logger.error(f"Failed to translate question {question.get('question_no', '?')} - skipping")
-                return None  # Skip this question
-            translated['question'] = translated_q
-        
-        # Translate options (critical)
-        if 'options' in question:
-            translated_options = []
-            for option in question['options']:
-                translated_opt = self.translate(option)
-                if translated_opt is None:
-                    logger.error(f"Failed to translate option in question {question.get('question_no', '?')} - skipping")
-                    return None  # Skip this question
-                translated_options.append(translated_opt)
-            translated['options'] = translated_options
-        
-        # Translate answer (critical)
-        if 'answer' in question:
-            translated_ans = self.translate(question['answer'])
-            if translated_ans is None:
-                logger.error(f"Failed to translate answer in question {question.get('question_no', '?')} - skipping")
-                return None  # Skip this question
-            translated['answer'] = translated_ans
-        
-        # Translate explanation (optional - keep original if fails)
-        if 'explanation' in question and question['explanation']:
-            translated_exp = self.translate(question['explanation'])
-            if translated_exp is None:
-                logger.warning(f"Failed to translate explanation - keeping original")
-                translated['explanation'] = question['explanation']
-            else:
-                translated['explanation'] = translated_exp
-        
-        # Translate category (optional - keep original if fails)
-        if 'category' in question and question['category']:
-            translated_cat = self.translate(question['category'])
-            if translated_cat is None:
-                logger.warning(f"Failed to translate category - keeping original")
-                translated['category'] = question['category']
-            else:
-                translated['category'] = translated_cat
-        
-        return translated
+        try:
+            # Translate question text
+            if 'question' in question:
+                translated['question'] = self.translate(question['question'])
+            
+            # Translate options
+            if 'options' in question:
+                translated['options'] = [
+                    self.translate(option) for option in question['options']
+                ]
+            
+            # Translate answer
+            if 'answer' in question:
+                translated['answer'] = self.translate(question['answer'])
+            
+            # Translate explanation
+            if 'explanation' in question and question['explanation']:
+                translated['explanation'] = self.translate(question['explanation'])
+            
+            # Translate category
+            if 'category' in question and question['category']:
+                translated['category'] = self.translate(question['category'])
+            
+            return translated
+            
+        except Exception as e:
+            logger.error(f"Failed to translate question {question.get('question_no', '?')}: {e}")
+            return question  # Return original if translation fails
