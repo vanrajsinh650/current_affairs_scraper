@@ -1,61 +1,44 @@
-import translators as ts
-import logging
-import time
+TRANSLATIONS = {
+    'en': {
+        'title': 'Current Affairs Questions & Answers',
+        'week_of': 'Week of {start_date} to {end_date}',
+        'generated_on': 'Generated on {date}',
+        'question': 'Q. {num}',
+        'answer': 'Answer',
+        'explanation': 'Explanation',
+        'category': 'Category',
+        'summary': 'Summary',
+        'total_questions': 'Total Questions',
+        'generated_date': 'Generated Date',
+        'document_type': 'Document Type',
+        'quiz_type': 'Weekly Current Affairs Quiz',
+    },
+    'gu': {
+        'title': 'વર્તમાન બાબતોના પ્રશ્નો અને જવાબો',
+        'week_of': '{start_date} થી {end_date} સુધીનો સપ્તાહ',
+        'generated_on': '{date} પર તૈયાર કરવામાં આવ્યું',
+        'question': 'પ્રશ્ન. {num}',
+        'answer': 'જવાબ',
+        'explanation': 'સમજૂતી',
+        'category': 'શ્રેણી',
+        'summary': 'સારાંશ',
+        'total_questions': 'કુલ પ્રશ્નો',
+        'generated_date': 'તૈયાર કરવાની તારીખ',
+        'document_type': 'દસ્તાવેજ પ્રકાર',
+        'quiz_type': 'સાપ્તાહિક વર્તમાન બાબતોના પ્રશ્નો',
+    }
+}
 
-logger = logging.getLogger(__name__)
 
-
-class Translator:
-    """Handle translation of text to Gujarati using free APIs"""
+def get_text(language: str, key: str, **kwargs) -> str:
+    """Get translated label for PDF"""
+    lang_dict = TRANSLATIONS.get(language, TRANSLATIONS['en'])
+    text = lang_dict.get(key, key)
     
-    def __init__(self):
-        logger.info("Translator initialized (using free translators API)")
-    
-    def translate(self, text: str, target_language: str = 'gu') -> str:
-        if not text or not text.strip():
-            return text
-        
+    if kwargs:
         try:
-            # Use Google Translate (free) via translators library
-            translated = ts.translate_text(
-                query_text=text,
-                translator='google',
-                from_language='en',
-                to_language=target_language
-            )
-            
-            logger.debug(f"Translated: {text[:50]}... -> {translated[:50]}...")
-            
-            # Small delay to avoid rate limiting
-            time.sleep(0.1)
-            
-            return translated
-            
-        except Exception as e:
-            logger.error(f"Translation error for '{text[:50]}...': {e}")
-            logger.warning("Returning original text")
+            return text.format(**kwargs)
+        except (KeyError, ValueError):
             return text
     
-    def translate_question(self, question: dict) -> dict:
-        translated = question.copy()
-        
-        logger.info(f"Translating question {question.get('question_no', '?')}")
-        
-        if 'question' in question:
-            translated['question'] = self.translate(question['question'])
-        
-        if 'options' in question:
-            translated['options'] = [
-                self.translate(option) for option in question['options']
-            ]
-        
-        if 'answer' in question:
-            translated['answer'] = self.translate(question['answer'])
-        
-        if 'explanation' in question and question['explanation']:
-            translated['explanation'] = self.translate(question['explanation'])
-        
-        if 'category' in question and question['category']:
-            translated['category'] = self.translate(question['category'])
-        
-        return translated
+    return text
