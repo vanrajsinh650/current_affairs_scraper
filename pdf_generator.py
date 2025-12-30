@@ -7,28 +7,59 @@ from reportlab.lib.units import inch
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 import logging
+from translations import get_text
 
 logger = logging.getLogger(__name__)
 
 
 class PDFGenerator:
-    """Generate PDF from scraped current affairs questions"""
+    """Generate PDF from current affairs questions"""
     
     def __init__(self, output_dir: str = "output", language: str = 'gu'):
-        """Initialize PDF generator"""
+        """Initialize PDF generator with output directory and language"""
         self.output_dir = output_dir
         self.language = language
         self.styles = getSampleStyleSheet()
-        self._setup_custom_styles()
         
-        # Create output directory if not exists
+        # Create output folder if doesn't exist
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
             logger.info(f"Created output directory: {output_dir}")
+        
+        # Setup fonts and styles
+        self._register_fonts()
+        self._setup_custom_styles()
+    
+    def _register_fonts(self):
+        """Register Gujarati fonts for PDF"""
+        try:
+            # Try Noto Sans Gujarati font first
+            pdfmetrics.registerFont(TTFont('NotoSansGujarati', '/usr/share/fonts/truetype/noto/NotoSansGujarati-Regular.ttf'))
+            pdfmetrics.registerFont(TTFont('NotoSansGujarati-Bold', '/usr/share/fonts/truetype/noto/NotoSansGujarati-Bold.ttf'))
+            self.font_name = 'NotoSansGujarati'
+            self.font_name_bold = 'NotoSansGujarati-Bold'
+            logger.info("Noto Sans Gujarati fonts registered")
+        except Exception as e:
+            # Fallback to general Noto Sans
+            logger.warning(f"Could not register Gujarati fonts: {e}")
+            try:
+                pdfmetrics.registerFont(TTFont('NotoSans', '/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf'))
+                pdfmetrics.registerFont(TTFont('NotoSans-Bold', '/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf'))
+                self.font_name = 'NotoSans'
+                self.font_name_bold = 'NotoSans-Bold'
+                logger.info("Noto Sans fonts registered as fallback")
+            except Exception as e2:
+                # Last resort: use default fonts
+                logger.error(f"Could not register any fonts: {e2}")
+                self.font_name = 'Helvetica'
+                self.font_name_bold = 'Helvetica-Bold'
     
     def _setup_custom_styles(self):
-        """Setup custom paragraph styles"""
+        """Setup custom text styles for PDF"""
+        
         # Title style
         self.styles.add(ParagraphStyle(
             name='CustomTitle',
@@ -37,7 +68,7 @@ class PDFGenerator:
             textColor=colors.HexColor('#1f4788'),
             spaceAfter=12,
             alignment=TA_CENTER,
-            fontName='Helvetica-Bold'
+            fontName=self.font_name_bold
         ))
         
         # Question number style
@@ -46,7 +77,7 @@ class PDFGenerator:
             parent=self.styles['Normal'],
             fontSize=11,
             textColor=colors.HexColor('#2c5aa0'),
-            fontName='Helvetica-Bold',
+            fontName=self.font_name_bold,
             spaceAfter=6
         ))
         
@@ -57,7 +88,8 @@ class PDFGenerator:
             fontSize=10,
             textColor=colors.HexColor('#000000'),
             alignment=TA_JUSTIFY,
-            spaceAfter=8
+            spaceAfter=8,
+            fontName=self.font_name
         ))
         
         # Option style
@@ -67,16 +99,17 @@ class PDFGenerator:
             fontSize=9,
             textColor=colors.HexColor('#333333'),
             leftIndent=0.3*inch,
-            spaceAfter=4
+            spaceAfter=4,
+            fontName=self.font_name
         ))
         
-        # Answer style
+        # Answer style (green color)
         self.styles.add(ParagraphStyle(
             name='AnswerStyle',
             parent=self.styles['Normal'],
             fontSize=9,
             textColor=colors.HexColor('#228B22'),
-            fontName='Helvetica-Bold',
+            fontName=self.font_name_bold,
             leftIndent=0.3*inch,
             spaceAfter=3
         ))
@@ -89,7 +122,8 @@ class PDFGenerator:
             textColor=colors.HexColor('#666666'),
             leftIndent=0.6*inch,
             spaceAfter=10,
-            alignment=TA_JUSTIFY
+            alignment=TA_JUSTIFY,
+            fontName=self.font_name
         ))
         
         # Category style
@@ -98,7 +132,7 @@ class PDFGenerator:
             parent=self.styles['Normal'],
             fontSize=8,
             textColor=colors.HexColor('#0066cc'),
-            fontName='Helvetica-Oblique',
+            fontName=self.font_name,
             leftIndent=0.3*inch,
             spaceAfter=8
         ))
@@ -107,62 +141,54 @@ class PDFGenerator:
         """Format a single question for PDF"""
         elements = []
         
-        # Question number
-        q_num = f"Q. {question['question_no']}"
+        # Add question number
+        q_num = get_text(self.language, 'question', num=question['question_no'])
         elements.append(Paragraph(q_num, self.styles['QuestionNum']))
         
-        # Question text
+        # Add question text
         question_text = question['question'].replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
         elements.append(Paragraph(question_text, self.styles['QuestionText']))
         
-        # Options
+        # Add all options
         for option in question.get('options', []):
             option_text = option.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
             elements.append(Paragraph(f"• {option_text}", self.styles['OptionStyle']))
         
-        # Answer
+        # Add answer
         answer = question.get('answer', 'Not available')
         answer = answer.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
         elements.append(Spacer(1, 0.1*inch))
-        elements.append(Paragraph(f"<b>Answer:</b> {answer}", self.styles['AnswerStyle']))
+        answer_label = get_text(self.language, 'answer')
+        elements.append(Paragraph(f"<b>{answer_label}:</b> {answer}", self.styles['AnswerStyle']))
         
-        # Category (if available)
+        # Add category if available
         category = question.get('category', '')
         if category:
             category = category.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            elements.append(Paragraph(f"<b>Category:</b> {category}", self.styles['CategoryStyle']))
+            category_label = get_text(self.language, 'category')
+            elements.append(Paragraph(f"<b>{category_label}:</b> {category}", self.styles['CategoryStyle']))
         
-        # Explanation (if available)
+        # Add explanation if available
         explanation = question.get('explanation', '')
         if explanation:
             explanation = explanation.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            # Truncate very long explanations
             if len(explanation) > 500:
                 explanation = explanation[:500] + "..."
-            elements.append(Paragraph(f"<b>Explanation:</b> {explanation}", self.styles['ExplanationStyle']))
+            explanation_label = get_text(self.language, 'explanation')
+            elements.append(Paragraph(f"<b>{explanation_label}:</b> {explanation}", self.styles['ExplanationStyle']))
         
-        # Separator
+        # Add separator between questions
         elements.append(Spacer(1, 0.15*inch))
         
         return elements
     
     def generate_pdf(self, questions: List[Dict], start_date: str = None, end_date: str = None) -> str:
-        """
-        Generate PDF from list of questions
-        
-        Args:
-            questions: List of question dictionaries
-            start_date: Start date (YYYY-MM-DD)
-            end_date: End date (YYYY-MM-DD)
-        
-        Returns:
-            Path to generated PDF file
-        """
+        """Generate PDF file from questions list"""
         if not questions:
             logger.warning("No questions to generate PDF")
             return None
         
-        # Generate filename with date
+        # Create filename with timestamp
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"current_affairs_{timestamp}.pdf"
         filepath = os.path.join(self.output_dir, filename)
@@ -179,39 +205,46 @@ class PDFGenerator:
             bottomMargin=0.5*inch
         )
         
-        # Build content
         elements = []
         
-        # Title
-        title_text = "Current Affairs Questions &amp; Answers"
+        # Add title
+        title_text = get_text(self.language, 'title')
         elements.append(Paragraph(title_text, self.styles['CustomTitle']))
         
-        # Date range subtitle
+        # Add date range
         if start_date and end_date:
-            date_text = f"<i>Week of {start_date} to {end_date}</i>"
+            date_text = get_text(self.language, 'week_of', start_date=start_date, end_date=end_date)
         else:
-            date_text = f"<i>Generated on {datetime.now().strftime('%B %d, %Y')}</i>"
+            date_text = get_text(self.language, 'generated_on', date=datetime.now().strftime('%B %d, %Y'))
         
-        elements.append(Paragraph(date_text, self.styles['Normal']))
+        elements.append(Paragraph(f"<i>{date_text}</i>", self.styles['Normal']))
         elements.append(Spacer(1, 0.2*inch))
         
         # Add all questions
         for question in questions:
             elements.extend(self._format_question(question))
         
-        # Add summary page at end
+        # Add summary page
         elements.append(PageBreak())
-        elements.append(Paragraph("Summary", self.styles['Heading2']))
+        summary_title = get_text(self.language, 'summary')
+        elements.append(Paragraph(summary_title, self.styles['Heading2']))
         elements.append(Spacer(1, 0.1*inch))
         
+        # Get translated labels
+        total_q = get_text(self.language, 'total_questions')
+        gen_date = get_text(self.language, 'generated_date')
+        doc_type = get_text(self.language, 'document_type')
+        quiz_type = get_text(self.language, 'quiz_type')
+        
+        # Add summary content
         summary_text = f"""
-        <b>Total Questions:</b> {len(questions)}<br/>
-        <b>Generated Date:</b> {datetime.now().strftime('%B %d, %Y at %H:%M:%S')}<br/>
-        <b>Document Type:</b> Weekly Current Affairs Quiz<br/>
+        <b>{total_q}:</b> {len(questions)}<br/>
+        <b>{gen_date}:</b> {datetime.now().strftime('%B %d, %Y at %H:%M:%S')}<br/>
+        <b>{doc_type}:</b> {quiz_type}<br/>
         """
         elements.append(Paragraph(summary_text, self.styles['Normal']))
         
-        # Build PDF
+        # Build the PDF
         try:
             doc.build(elements)
             logger.info(f"PDF generated successfully: {filepath}")
