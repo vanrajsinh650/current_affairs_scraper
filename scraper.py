@@ -6,6 +6,7 @@ from typing import List, Dict, Optional
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from config import HEADERS, MAX_RETRIES, RETRY_DELAY, TIMEOUT, CURRENT_AFFAIRS_URL, BASE_URL
+from translations import Translator
 
 # Configure logging
 logging.basicConfig(
@@ -179,33 +180,17 @@ def scrape_weekly_questions(dates: List) -> List[Dict]:
     logger.info(f"Scrape complete. Total questions: {len(all_questions)}")
     return all_questions
 
+def translate_questions_to_gujarati(questions: list[Dict]) -> List[Dict]:
+    logger.info(f"Translating {len(questions)} questions to gujarati")
+    translator = Translator()
 
-if __name__ == "__main__":
-    from config import get_date_range
-    
-    dates = get_date_range()
-    
-    print("\n" + "="*60)
-    print("SCRAPING PAST 7 DAYS OF CURRENT AFFAIRS")
-    print("="*60)
-    print("\nWill scrape these dates:")
-    for date in dates:
-        print(f"  - {date.strftime('%Y-%m-%d (%A)')}")
-    
-    print("\nStarting scraper...\n")
-    
-    questions = scrape_weekly_questions(dates)
-    
-    print("\n" + "="*60)
-    print("SCRAPING SUMMARY")
-    print("="*60)
-    print(f"Total questions scraped: {len(questions)}")
-    
-    if questions:
-        print(f"\nSUCCESS! Sample question:")
-        print(f"Q: {questions[0]['question'][:80]}...")
-        print(f"Answer: {questions[0]['answer']}")
-        print(f"Category: {questions[0].get('category', 'N/A')}")
-        print(f"Date: {questions[0].get('date', 'N/A')}")
-    else:
-        print("\nNo questions found.")
+    translated_questions = []
+    for i, question in enumerate(questions, 1):
+        translated_q = translator.translate_question(question)
+        translated_questions.append(translated_q)
+
+        if i % 10 == 0:
+            logger.info(f"Translated {i}/{len(questions)} questions")
+
+    logger.info(f"Successfully translated all {len(questions)} questions")
+    return translated_questions
