@@ -64,7 +64,7 @@ def main():
         
         if pdf_path:
             logger.info(f"PDF generated successfully: {pdf_path}")
-            print(f"\SUCCESS! Gujarati PDF created: {pdf_path}")
+            print(f"\n SUCCESS! Gujarati PDF created: {pdf_path}")
             print(f"Total questions: {len(gujarati_questions)}")
             return True
         else:
@@ -74,7 +74,7 @@ def main():
         
     except Exception as e:
         logger.error(f"Error in main execution: {str(e)}", exc_info=True)
-        print(f"\Error: {str(e)}")
+        print(f"\n Error: {str(e)}")
         return False
 
 
