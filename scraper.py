@@ -6,7 +6,7 @@ from typing import List, Dict, Optional
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from config import HEADERS, MAX_RETRIES, RETRY_DELAY, TIMEOUT, CURRENT_AFFAIRS_URL, BASE_URL
-from translations import Translator
+from translator import Translator
 
 # Configure logging
 logging.basicConfig(
@@ -180,17 +180,36 @@ def scrape_weekly_questions(dates: List) -> List[Dict]:
     logger.info(f"Scrape complete. Total questions: {len(all_questions)}")
     return all_questions
 
-def translate_questions_to_gujarati(questions: list[Dict]) -> List[Dict]:
-    logger.info(f"Translating {len(questions)} questions to gujarati")
-    translator = Translator()
-
+def translate_questions_to_gujarati(questions: List[Dict]) -> List[Dict]:
+    """Translate all questions to Gujarati, skip failed ones"""
+    from translator import Translator
+    
+    logger.info(f"Starting translation of {len(questions)} questions to Gujarati...")
+    translator = Translator(max_retries=3)
+    
     translated_questions = []
+    skipped_count = 0
+    
     for i, question in enumerate(questions, 1):
-        translated_q = translator.translate_question(question)
-        translated_questions.append(translated_q)
-
-        if i % 10 == 0:
-            logger.info(f"Translated {i}/{len(questions)} questions")
-
-    logger.info(f"Successfully translated all {len(questions)} questions")
+        try:
+            translated_q = translator.translate_question(question)
+            
+            if translated_q is None:
+                # Translation failed after 3 retries - skip this question
+                logger.warning(f"Skipping question {i} after failed translation")
+                skipped_count += 1
+            else:
+                translated_questions.append(translated_q)
+            
+            if i % 10 == 0:
+                logger.info(f"Translated {i}/{len(questions)} questions (skipped: {skipped_count})")
+                print(f"   Translating... {i}/{len(questions)} done (skipped: {skipped_count})")
+        
+        except Exception as e:
+            logger.error(f"Failed to translate question {i}: {e}")
+            skipped_count += 1
+    
+    logger.info(f"Translation complete: {len(translated_questions)} questions translated, {skipped_count} skipped")
+    print(f"\n✓ Translation complete: {len(translated_questions)} translated, {skipped_count} skipped")
+    
     return translated_questions
