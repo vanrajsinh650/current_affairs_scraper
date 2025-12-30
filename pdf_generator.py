@@ -60,7 +60,7 @@ class PDFGenerator:
     def _setup_custom_styles(self):
         """Setup custom text styles for PDF"""
         
-        # Title style
+        # Title style - English font
         self.styles.add(ParagraphStyle(
             name='CustomTitle',
             parent=self.styles['Heading1'],
@@ -68,20 +68,20 @@ class PDFGenerator:
             textColor=colors.HexColor('#1f4788'),
             spaceAfter=12,
             alignment=TA_CENTER,
-            fontName=self.font_name_bold
+            fontName='Helvetica-Bold'
         ))
         
-        # Question number style
+        # Question number style - English font
         self.styles.add(ParagraphStyle(
             name='QuestionNum',
             parent=self.styles['Normal'],
             fontSize=11,
             textColor=colors.HexColor('#2c5aa0'),
-            fontName=self.font_name_bold,
+            fontName='Helvetica-Bold',
             spaceAfter=6
         ))
         
-        # Question text style
+        # Question text style - Gujarati font
         self.styles.add(ParagraphStyle(
             name='QuestionText',
             parent=self.styles['Normal'],
@@ -92,7 +92,7 @@ class PDFGenerator:
             fontName=self.font_name
         ))
         
-        # Option style
+        # Option style - Gujarati font
         self.styles.add(ParagraphStyle(
             name='OptionStyle',
             parent=self.styles['Normal'],
@@ -103,18 +103,18 @@ class PDFGenerator:
             fontName=self.font_name
         ))
         
-        # Answer style (green color)
+        # Answer style - Gujarati font
         self.styles.add(ParagraphStyle(
             name='AnswerStyle',
             parent=self.styles['Normal'],
             fontSize=9,
             textColor=colors.HexColor('#228B22'),
-            fontName=self.font_name_bold,
+            fontName=self.font_name,
             leftIndent=0.3*inch,
             spaceAfter=3
         ))
         
-        # Explanation style
+        # Explanation style - Gujarati font
         self.styles.add(ParagraphStyle(
             name='ExplanationStyle',
             parent=self.styles['Normal'],
@@ -126,7 +126,7 @@ class PDFGenerator:
             fontName=self.font_name
         ))
         
-        # Category style
+        # Category style - Gujarati font
         self.styles.add(ParagraphStyle(
             name='CategoryStyle',
             parent=self.styles['Normal'],
@@ -248,7 +248,7 @@ class PDFGenerator:
         try:
             doc.build(elements)
             logger.info(f"PDF generated successfully: {filepath}")
-            print(f"\n✓ PDF created: {filepath}")
+            print(f"\n PDF created: {filepath}")
             return filepath
         except Exception as e:
             logger.error(f"Error generating PDF: {str(e)}")
