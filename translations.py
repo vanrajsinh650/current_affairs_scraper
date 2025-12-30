@@ -1,63 +1,61 @@
-from google.cloud import translate_v2
+import translators as ts
 import logging
+import time
 
 logger = logging.getLogger(__name__)
 
+
 class Translator:
-    """Handle translations of text to gujarati"""
-
+    """Handle translation of text to Gujarati using free APIs"""
+    
     def __init__(self):
-        try:
-            self.client = translate_v2
-            logger.info("Google Translate client initialized")
-        except Exception as e:
-            logger.error(f"Failed to initialize google translate: {e}")
-            self.client = None
-
+        logger.info("Translator initialized (using free translators API)")
+    
     def translate(self, text: str, target_language: str = 'gu') -> str:
         if not text or not text.strip():
             return text
         
-        if not self.client:
-            logger.warning("Google Translate not available, returning original text")
-            return text
-        
         try:
-            result = self.client.translate_text(
-                source_language='en',
-                target_language=target_language,
-                content_type='text/plain',
-                values=[text]
+            # Use Google Translate (free) via translators library
+            translated = ts.translate_text(
+                query_text=text,
+                translator='google',
+                from_language='en',
+                to_language=target_language
             )
-
-            if result and len(result['translations']) > 0:
-                translated = result['translations'][0]['translatedText']
-                logger.debug(f"Translated: {text[:50]}... ->  {translated[:50]}...")
-                return translated
-            else:
-                logger.warning(f"No translation result for: {text[:50]}")
-                return text
-        
+            
+            logger.debug(f"Translated: {text[:50]}... -> {translated[:50]}...")
+            
+            # Small delay to avoid rate limiting
+            time.sleep(0.1)
+            
+            return translated
+            
         except Exception as e:
-            logger.error(f"Translation error: {e}")
+            logger.error(f"Translation error for '{text[:50]}...': {e}")
+            logger.warning("Returning original text")
             return text
-        
+    
     def translate_question(self, question: dict) -> dict:
         translated = question.copy()
-
+        
+        logger.info(f"Translating question {question.get('question_no', '?')}")
+        
         if 'question' in question:
             translated['question'] = self.translate(question['question'])
-
+        
         if 'options' in question:
-            translated['options'] = [self.translate(option) for option in question['options']]
-
+            translated['options'] = [
+                self.translate(option) for option in question['options']
+            ]
+        
         if 'answer' in question:
             translated['answer'] = self.translate(question['answer'])
-
-        if 'explanation' in question:
+        
+        if 'explanation' in question and question['explanation']:
             translated['explanation'] = self.translate(question['explanation'])
-
-        if 'category' in question:
+        
+        if 'category' in question and question['category']:
             translated['category'] = self.translate(question['category'])
-
+        
         return translated
