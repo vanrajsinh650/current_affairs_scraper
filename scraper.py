@@ -6,7 +6,6 @@ from typing import List, Dict, Optional
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from config import HEADERS, MAX_RETRIES, RETRY_DELAY, TIMEOUT, CURRENT_AFFAIRS_URL, BASE_URL
-from translator import Translator
 
 # Configure logging
 logging.basicConfig(
@@ -168,6 +167,7 @@ def scrape_date_wise(date_obj, session: requests.Session) -> List[Dict]:
 
 
 def scrape_weekly_questions(dates: List) -> List[Dict]:
+    """Scrape questions for all dates (NO TRANSLATION - just scraping)"""
     all_questions = []
     session = create_session()
     
@@ -179,28 +179,3 @@ def scrape_weekly_questions(dates: List) -> List[Dict]:
     
     logger.info(f"Scrape complete. Total questions: {len(all_questions)}")
     return all_questions
-
-def translate_questions_to_gujarati(questions: List[Dict]) -> List[Dict]:
-    """Translate all questions to Gujarati"""
-    from translator import Translator
-    
-    logger.info(f"Starting translation of {len(questions)} questions...")
-    translator = Translator(max_retries=2)
-    
-    translated_questions = []
-    
-    for i, question in enumerate(questions, 1):
-        try:
-            translated_q = translator.translate_question(question)
-            translated_questions.append(translated_q)
-            
-            if i % 5 == 0:
-                logger.info(f"Translated {i}/{len(questions)} questions")
-                print(f"   Translating... {i}/{len(questions)} done")
-        
-        except Exception as e:
-            logger.error(f"Failed to translate question {i}: {e}")
-            translated_questions.append(question)  # Keep original if fails
-    
-    logger.info(f"Translation complete: {len(translated_questions)} questions")
-    return translated_questions

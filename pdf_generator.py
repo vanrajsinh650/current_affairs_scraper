@@ -1,255 +1,284 @@
-import os
-from datetime import datetime
-from typing import List, Dict
-from reportlab.lib.pagesizes import letter
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib.units import inch
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, PageBreak
-from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.enums import TA_LEFT, TA_CENTER, TA_JUSTIFY
+from reportlab.lib.utils import ImageReader
+import os
 import logging
-from translations import get_text
+import re
+from datetime import datetime
+from typing import List, Dict
 
 logger = logging.getLogger(__name__)
 
 
 class PDFGenerator:
-    """Generate PDF from current affairs questions"""
-    
-    def __init__(self, output_dir: str = "output", language: str = 'gu'):
-        """Initialize PDF generator with output directory and language"""
+    def __init__(self, output_dir: str = "output", language: str = 'en', watermark_image: str = None):
         self.output_dir = output_dir
         self.language = language
-        self.styles = getSampleStyleSheet()
+        self.watermark_image = watermark_image
+        os.makedirs(output_dir, exist_ok=True)
         
-        # Create output folder if doesn't exist
-        if not os.path.exists(output_dir):
-            os.makedirs(output_dir)
-            logger.info(f"Created output directory: {output_dir}")
-        
-        # Setup fonts and styles
-        self._register_fonts()
-        self._setup_custom_styles()
+        # Register fonts for mixed text
+        if language == 'gu':
+            self._register_fonts()
     
     def _register_fonts(self):
-        """Register Gujarati fonts for PDF"""
+        """Register both Gujarati and English fonts"""
         try:
-            # Try Noto Sans Gujarati font first
-            pdfmetrics.registerFont(TTFont('NotoSansGujarati', '/usr/share/fonts/truetype/noto/NotoSansGujarati-Regular.ttf'))
-            pdfmetrics.registerFont(TTFont('NotoSansGujarati-Bold', '/usr/share/fonts/truetype/noto/NotoSansGujarati-Bold.ttf'))
-            self.font_name = 'NotoSansGujarati'
-            self.font_name_bold = 'NotoSansGujarati-Bold'
-            logger.info("Noto Sans Gujarati fonts registered")
+            # Register Gujarati font
+            gujarati_font_paths = [
+                '/usr/share/fonts/truetype/noto/NotoSansGujarati-Regular.ttf',
+                '/usr/share/fonts/truetype/lohit-gujarati/Lohit-Gujarati.ttf',
+            ]
+            
+            for font_path in gujarati_font_paths:
+                if os.path.exists(font_path):
+                    pdfmetrics.registerFont(TTFont('GujaratiFont', font_path))
+                    logger.info(f"✓ Registered Gujarati font: {font_path}")
+                    break
+            
+            logger.info("Fonts registered for mixed Gujarati-English text")
+                
         except Exception as e:
-            # Fallback to general Noto Sans
-            logger.warning(f"Could not register Gujarati fonts: {e}")
-            try:
-                pdfmetrics.registerFont(TTFont('NotoSans', '/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf'))
-                pdfmetrics.registerFont(TTFont('NotoSans-Bold', '/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf'))
-                self.font_name = 'NotoSans'
-                self.font_name_bold = 'NotoSans-Bold'
-                logger.info("Noto Sans fonts registered as fallback")
-            except Exception as e2:
-                # Last resort: use default fonts
-                logger.error(f"Could not register any fonts: {e2}")
-                self.font_name = 'Helvetica'
-                self.font_name_bold = 'Helvetica-Bold'
+            logger.error(f"Error registering fonts: {e}")
     
-    def _setup_custom_styles(self):
-        """Setup custom text styles for PDF"""
+    def _add_watermark(self, canvas, doc):
+        """Add watermark/background image to every page"""
+        if not self.watermark_image or not os.path.exists(self.watermark_image):
+            return
         
-        # Title style - English font
-        self.styles.add(ParagraphStyle(
-            name='CustomTitle',
-            parent=self.styles['Heading1'],
-            fontSize=18,
-            textColor=colors.HexColor('#1f4788'),
-            spaceAfter=12,
-            alignment=TA_CENTER,
-            fontName='Helvetica-Bold'
-        ))
-        
-        # Question number style - English font
-        self.styles.add(ParagraphStyle(
-            name='QuestionNum',
-            parent=self.styles['Normal'],
-            fontSize=11,
-            textColor=colors.HexColor('#2c5aa0'),
-            fontName='Helvetica-Bold',
-            spaceAfter=6
-        ))
-        
-        # Question text style - Gujarati font
-        self.styles.add(ParagraphStyle(
-            name='QuestionText',
-            parent=self.styles['Normal'],
-            fontSize=10,
-            textColor=colors.HexColor('#000000'),
-            alignment=TA_JUSTIFY,
-            spaceAfter=8,
-            fontName=self.font_name
-        ))
-        
-        # Option style - Gujarati font
-        self.styles.add(ParagraphStyle(
-            name='OptionStyle',
-            parent=self.styles['Normal'],
-            fontSize=9,
-            textColor=colors.HexColor('#333333'),
-            leftIndent=0.3*inch,
-            spaceAfter=4,
-            fontName=self.font_name
-        ))
-        
-        # Answer style - Gujarati font
-        self.styles.add(ParagraphStyle(
-            name='AnswerStyle',
-            parent=self.styles['Normal'],
-            fontSize=9,
-            textColor=colors.HexColor('#228B22'),
-            fontName=self.font_name,
-            leftIndent=0.3*inch,
-            spaceAfter=3
-        ))
-        
-        # Explanation style - Gujarati font
-        self.styles.add(ParagraphStyle(
-            name='ExplanationStyle',
-            parent=self.styles['Normal'],
-            fontSize=8,
-            textColor=colors.HexColor('#666666'),
-            leftIndent=0.6*inch,
-            spaceAfter=10,
-            alignment=TA_JUSTIFY,
-            fontName=self.font_name
-        ))
-        
-        # Category style - Gujarati font
-        self.styles.add(ParagraphStyle(
-            name='CategoryStyle',
-            parent=self.styles['Normal'],
-            fontSize=8,
-            textColor=colors.HexColor('#0066cc'),
-            fontName=self.font_name,
-            leftIndent=0.3*inch,
-            spaceAfter=8
-        ))
-    
-    def _format_question(self, question: Dict) -> List:
-        """Format a single question for PDF"""
-        elements = []
-        
-        # Add question number
-        q_num = get_text(self.language, 'question', num=question['question_no'])
-        elements.append(Paragraph(q_num, self.styles['QuestionNum']))
-        
-        # Add question text
-        question_text = question['question'].replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-        elements.append(Paragraph(question_text, self.styles['QuestionText']))
-        
-        # Add all options
-        for option in question.get('options', []):
-            option_text = option.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            elements.append(Paragraph(f"• {option_text}", self.styles['OptionStyle']))
-        
-        # Add answer
-        answer = question.get('answer', 'Not available')
-        answer = answer.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-        elements.append(Spacer(1, 0.1*inch))
-        answer_label = get_text(self.language, 'answer')
-        elements.append(Paragraph(f"<b>{answer_label}:</b> {answer}", self.styles['AnswerStyle']))
-        
-        # Add category if available
-        category = question.get('category', '')
-        if category:
-            category = category.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            category_label = get_text(self.language, 'category')
-            elements.append(Paragraph(f"<b>{category_label}:</b> {category}", self.styles['CategoryStyle']))
-        
-        # Add explanation if available
-        explanation = question.get('explanation', '')
-        if explanation:
-            explanation = explanation.replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;')
-            if len(explanation) > 500:
-                explanation = explanation[:500] + "..."
-            explanation_label = get_text(self.language, 'explanation')
-            elements.append(Paragraph(f"<b>{explanation_label}:</b> {explanation}", self.styles['ExplanationStyle']))
-        
-        # Add separator between questions
-        elements.append(Spacer(1, 0.15*inch))
-        
-        return elements
-    
-    def generate_pdf(self, questions: List[Dict], start_date: str = None, end_date: str = None) -> str:
-        """Generate PDF file from questions list"""
-        if not questions:
-            logger.warning("No questions to generate PDF")
-            return None
-        
-        # Create filename with timestamp
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"current_affairs_{timestamp}.pdf"
-        filepath = os.path.join(self.output_dir, filename)
-        
-        logger.info(f"Generating PDF: {filename}")
-        
-        # Create PDF document
-        doc = SimpleDocTemplate(
-            filepath,
-            pagesize=letter,
-            rightMargin=0.5*inch,
-            leftMargin=0.5*inch,
-            topMargin=0.5*inch,
-            bottomMargin=0.5*inch
-        )
-        
-        elements = []
-        
-        # Add title
-        title_text = get_text(self.language, 'title')
-        elements.append(Paragraph(title_text, self.styles['CustomTitle']))
-        
-        # Add date range
-        if start_date and end_date:
-            date_text = get_text(self.language, 'week_of', start_date=start_date, end_date=end_date)
-        else:
-            date_text = get_text(self.language, 'generated_on', date=datetime.now().strftime('%B %d, %Y'))
-        
-        elements.append(Paragraph(f"<i>{date_text}</i>", self.styles['Normal']))
-        elements.append(Spacer(1, 0.2*inch))
-        
-        # Add all questions
-        for question in questions:
-            elements.extend(self._format_question(question))
-        
-        # Add summary page
-        elements.append(PageBreak())
-        summary_title = get_text(self.language, 'summary')
-        elements.append(Paragraph(summary_title, self.styles['Heading2']))
-        elements.append(Spacer(1, 0.1*inch))
-        
-        # Get translated labels
-        total_q = get_text(self.language, 'total_questions')
-        gen_date = get_text(self.language, 'generated_date')
-        doc_type = get_text(self.language, 'document_type')
-        quiz_type = get_text(self.language, 'quiz_type')
-        
-        # Add summary content
-        summary_text = f"""
-        <b>{total_q}:</b> {len(questions)}<br/>
-        <b>{gen_date}:</b> {datetime.now().strftime('%B %d, %Y at %H:%M:%S')}<br/>
-        <b>{doc_type}:</b> {quiz_type}<br/>
-        """
-        elements.append(Paragraph(summary_text, self.styles['Normal']))
-        
-        # Build the PDF
         try:
-            doc.build(elements)
+            # Get page dimensions
+            page_width, page_height = A4
+            
+            # Load image
+            img = ImageReader(self.watermark_image)
+            img_width, img_height = img.getSize()
+            
+            # Calculate centered position and size
+            # Make watermark large but semi-transparent
+            max_size = min(page_width, page_height) * 0.6
+            aspect = img_width / img_height
+            
+            if aspect > 1:
+                # Landscape image
+                w = max_size
+                h = max_size / aspect
+            else:
+                # Portrait image
+                h = max_size
+                w = max_size * aspect
+            
+            # Center the image
+            x = (page_width - w) / 2
+            y = (page_height - h) / 2
+            
+            # Save canvas state
+            canvas.saveState()
+            
+            # Set transparency (0.1 = 10% opacity for subtle watermark)
+            canvas.setFillAlpha(0.1)
+            
+            # Draw image
+            canvas.drawImage(self.watermark_image, x, y, width=w, height=h, 
+                           preserveAspectRatio=True, mask='auto')
+            
+            # Restore canvas state
+            canvas.restoreState()
+            
+        except Exception as e:
+            logger.error(f"Error adding watermark: {e}")
+    
+    def _wrap_mixed_text(self, text: str) -> str:
+        """Wrap text with proper font tags for mixed Gujarati-English"""
+        if not text:
+            return text
+        
+        # Detect if text has Gujarati characters
+        has_gujarati = bool(re.search(r'[\u0A80-\u0AFF]', text))
+        
+        if not has_gujarati:
+            # Pure English - use Helvetica
+            return f'<font name="Helvetica">{text}</font>'
+        
+        # Mixed text - wrap each part appropriately
+        result = []
+        current_text = ""
+        current_is_gujarati = None
+        
+        for char in text:
+            is_gujarati = '\u0A80' <= char <= '\u0AFF'
+            
+            if current_is_gujarati is None:
+                current_is_gujarati = is_gujarati
+                current_text = char
+            elif current_is_gujarati == is_gujarati:
+                current_text += char
+            else:
+                # Switch detected
+                if current_is_gujarati:
+                    result.append(f'<font name="GujaratiFont">{current_text}</font>')
+                else:
+                    result.append(f'<font name="Helvetica">{current_text}</font>')
+                
+                current_text = char
+                current_is_gujarati = is_gujarati
+        
+        # Add remaining text
+        if current_text:
+            if current_is_gujarati:
+                result.append(f'<font name="GujaratiFont">{current_text}</font>')
+            else:
+                result.append(f'<font name="Helvetica">{current_text}</font>')
+        
+        return ''.join(result)
+    
+    def generate_pdf(self, questions: List[Dict], start_date: str, end_date: str) -> str:
+        """Generate PDF from questions with watermark background"""
+        try:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            filename = f"current_affairs_{timestamp}.pdf"
+            filepath = os.path.join(self.output_dir, filename)
+            
+            logger.info(f"Generating PDF: {filename}")
+            
+            # Create PDF document with custom page template
+            doc = SimpleDocTemplate(
+                filepath,
+                pagesize=A4,
+                rightMargin=50,
+                leftMargin=50,
+                topMargin=50,
+                bottomMargin=50
+            )
+            
+            # Build content
+            story = []
+            
+            # Title style
+            title_style = ParagraphStyle(
+                'CustomTitle',
+                parent=getSampleStyleSheet()['Heading1'],
+                fontSize=18,
+                textColor=colors.HexColor('#1a4d8f'),
+                spaceAfter=6,
+                alignment=TA_CENTER,
+                leading=24
+            )
+            
+            title_text = self._wrap_mixed_text("Current Affairs Questions & Answers")
+            title = Paragraph(title_text, title_style)
+            story.append(title)
+            
+            # Date range
+            date_style = ParagraphStyle(
+                'DateStyle',
+                parent=getSampleStyleSheet()['Normal'],
+                fontSize=10,
+                textColor=colors.grey,
+                alignment=TA_CENTER,
+                spaceAfter=20,
+                leading=14
+            )
+            
+            date_text = self._wrap_mixed_text(f"Week of {start_date} to {end_date}")
+            story.append(Paragraph(date_text, date_style))
+            story.append(Spacer(1, 0.2*inch))
+            
+            # Question styles
+            q_style = ParagraphStyle(
+                'QuestionStyle',
+                parent=getSampleStyleSheet()['Normal'],
+                fontSize=11,
+                textColor=colors.HexColor('#1a4d8f'),
+                spaceAfter=8,
+                leading=16
+            )
+            
+            opt_style = ParagraphStyle(
+                'OptionStyle',
+                parent=getSampleStyleSheet()['Normal'],
+                fontSize=10,
+                leftIndent=20,
+                spaceAfter=4,
+                leading=14
+            )
+            
+            ans_style = ParagraphStyle(
+                'AnswerStyle',
+                parent=getSampleStyleSheet()['Normal'],
+                fontSize=10,
+                textColor=colors.HexColor('#2d5f2e'),
+                leftIndent=10,
+                spaceAfter=6,
+                leading=14
+            )
+            
+            exp_style = ParagraphStyle(
+                'ExplanationStyle',
+                parent=getSampleStyleSheet()['Normal'],
+                fontSize=9,
+                textColor=colors.HexColor('#4a4a4a'),
+                leftIndent=20,
+                rightIndent=10,
+                spaceAfter=12,
+                alignment=TA_JUSTIFY,
+                leading=13
+            )
+            
+            # Add questions
+            for idx, q in enumerate(questions, 1):
+                # Question
+                q_text = self._wrap_mixed_text(f"Q. {idx}")
+                q_text += "<br/>"
+                q_text += self._wrap_mixed_text(q.get('question', ''))
+                story.append(Paragraph(q_text, q_style))
+                
+                # Options
+                options = q.get('options', [])
+                option_letters = ['A', 'B', 'C', 'D', 'E', 'F']
+                for opt_idx, option in enumerate(options):
+                    if opt_idx < len(option_letters):
+                        opt_text = f'<font name="Helvetica">❍ {option_letters[opt_idx]}) </font>'
+                        opt_text += self._wrap_mixed_text(option)
+                        story.append(Paragraph(opt_text, opt_style))
+                
+                story.append(Spacer(1, 0.1*inch))
+                
+                # Answer
+                answer = q.get('answer', 'Not available')
+                ans_text = '<font name="Helvetica"><b>Answer: ✓</b> </font>'
+                ans_text += self._wrap_mixed_text(answer)
+                story.append(Paragraph(ans_text, ans_style))
+                
+                # Explanation
+                explanation = q.get('explanation', '')
+                if explanation and explanation.strip():
+                    exp_text = '<font name="Helvetica"><b>Explanation:</b> </font>'
+                    exp_text += self._wrap_mixed_text(explanation)
+                    story.append(Paragraph(exp_text, exp_style))
+                
+                # Spacing
+                story.append(Spacer(1, 0.2*inch))
+                
+                # Page break every 5 questions
+                if idx % 5 == 0 and idx < len(questions):
+                    story.append(PageBreak())
+            
+            # Build PDF with watermark on every page
+            doc.build(story, onFirstPage=self._add_watermark, onLaterPages=self._add_watermark)
+            
             logger.info(f"PDF generated successfully: {filepath}")
-            print(f"\n PDF created: {filepath}")
+            print(f"\nPDF created: {filepath}")
+            
             return filepath
+            
         except Exception as e:
-            logger.error(f"Error generating PDF: {str(e)}")
+            logger.error(f"Error generating PDF: {str(e)}", exc_info=True)
+            print(f"Error generating PDF: {str(e)}")
             return None
