@@ -1,6 +1,7 @@
 import json
 import logging
 import os
+import re
 import time
 from deep_translator import GoogleTranslator
 from dotenv import load_dotenv
@@ -8,211 +9,202 @@ from dotenv import load_dotenv
 load_dotenv()
 logger = logging.getLogger(__name__)
 
-
-class DeepTranslatorGU:
-    """Gujarati translator with retry logic and fallback to English"""
+class ImprovedGujaratiTranslator:
+    """Enhanced Google Translator with pre/post-processing"""
     
     def __init__(self):
-        """Initialize Google Translator"""
         try:
             self.translator = GoogleTranslator(source='en', target='gu')
-            logger.info("Deep Translator initialized")
-            print("✓ Deep Translator connected (Google Translate - FREE)")
+            print("✓ Enhanced Gujarati Translator Ready")
+            logger.info("✓ Translator initialized")
         except Exception as e:
-            logger.error(f"Failed to initialize: {e}")
-            print(f"Failed: {e}")
+            logger.error(f"Failed: {e}")
             self.translator = None
     
-    def translate_text_with_retry(self, text: str, max_retries: int = 3) -> str:
-        """Translate text with retry logic"""
+    def preprocess_text(self, text: str) -> tuple[str, dict]:
+        """Clean English before translation & extract entities"""
+        if not text:
+            return text, {}
+        
+        # Store proper nouns and special terms to restore later
+        entities = {}
+        counter = 0
+        
+        # Protect proper nouns (capitalized words)
+        def protect_entity(match):
+            nonlocal counter
+            placeholder = f"__ENTITY{counter}__"
+            entities[placeholder] = match.group(0)
+            counter += 1
+            return placeholder
+        
+        # Protect: Article numbers
+        text = re.sub(r'\bArticle \d+(?:\(\d+\))?', protect_entity, text)
+        
+        # Protect: Numbers with units ($, km, %, kg, etc.)
+        text = re.sub(r'\$[\d,\.]+\s*(?:billion|million|thousand)?', protect_entity, text)
+        text = re.sub(r'\d+[\d,\.]*\s*(?:km|kg|crore|lakh|million|billion|%|feet|tonnes?)', protect_entity, text, flags=re.IGNORECASE)
+        
+        # Protect: Years and dates
+        text = re.sub(r'\b(19|20)\d{2}(?:-\d{2}-\d{2})?\b', protect_entity, text)
+        
+        # Protect: Organization abbreviations
+        text = re.sub(r'\b[A-Z]{2,}(?:-[A-Z]{2,})?\b', protect_entity, text)
+        
+        # Clean up spacing
+        text = re.sub(r'\s+', ' ', text)
+        text = text.strip()
+        
+        # Fix common punctuation
+        text = text.replace('"', '"').replace('"', '"')
+        text = text.replace(''', "'").replace(''', "'")
+        
+        return text, entities
+    
+    def postprocess_text(self, gujarati: str, entities: dict) -> str:
+        """Restore entities after translation"""
+        if not gujarati:
+            return gujarati
+        
+        # Restore protected entities
+        for placeholder, original in entities.items():
+            gujarati = gujarati.replace(placeholder, original)
+        
+        # Fix spacing around punctuation
+        gujarati = re.sub(r'\s+([?,\.!।])', r'\1', gujarati)
+        gujarati = re.sub(r'([?,\.!।])\s*', r'\1 ', gujarati)
+        gujarati = gujarati.strip()
+        
+        return gujarati
+    
+    def translate_text(self, text: str, max_retries: int = 3) -> str:
+        """Translate with pre/post processing"""
         if not text or not text.strip():
             return text
         
-        # Try translating multiple times
+        # Preprocess
+        clean_text, entities = self.preprocess_text(text)
+        
+        # Translate
         for attempt in range(max_retries):
             try:
-                # Google Translate has 5000 char limit per request
-                if len(text) > 4500:
-                    # Split long text
-                    chunks = [text[i:i+4500] for i in range(0, len(text), 4500)]
-                    translated_chunks = []
-                    
-                    for chunk in chunks:
-                        translated = self.translator.translate(chunk)
-                        # If translation returns boxes or fails, keep English
-                        if self._has_boxes(translated) or not translated:
-                            translated_chunks.append(chunk)
-                        else:
-                            translated_chunks.append(translated)
-                    
-                    return ' '.join(translated_chunks)
+                if len(clean_text) > 4500:
+                    chunks = [clean_text[i:i+4500] for i in range(0, len(clean_text), 4500)]
+                    result = ' '.join([self.translator.translate(chunk) for chunk in chunks])
                 else:
-                    translated = self.translator.translate(text)
-                    
-                    # Check if translation has boxes (failed words)
-                    if self._has_boxes(translated):
-                        logger.warning(f"Translation has boxes, keeping original: {text[:50]}")
-                        return text  # Return original English
-                    
-                    return translated
+                    result = self.translator.translate(clean_text)
+                
+                if result and '□' not in result:
+                    # Postprocess
+                    result = self.postprocess_text(result, entities)
+                    return result
                     
             except Exception as e:
-                logger.warning(f"Translation attempt {attempt + 1} failed: {e}")
-                
-                # Last attempt failed, return original English text
+                logger.warning(f"Attempt {attempt + 1} failed: {e}")
                 if attempt == max_retries - 1:
-                    logger.error(f"All {max_retries} attempts failed, keeping English: {text[:50]}")
                     return text
-                
-                # Wait before retry
                 time.sleep(1)
         
-        # Fallback: return original English
         return text
     
-    def _has_boxes(self, text: str) -> bool:
-        """Check if translated text has box characters (failed translation)"""
-        # Box characters appear when font can't render
-        box_chars = ['□', '▯', '◻', '▢']
-        return any(char in text for char in box_chars)
-    
     def translate_question(self, question: dict, q_num: int) -> dict:
-        """Translate entire question with retry logic"""
+        """Translate question with special handling"""
+        if not self.translator:
+            return question
+            
         translated = question.copy()
         
         try:
-            # Translate question
+            # Question text
             if 'question' in question:
-                original = question['question']
-                translated['question'] = self.translate_text_with_retry(original, max_retries=3)
-                
-                # Log if kept in English
-                if translated['question'] == original:
-                    logger.info(f"Q{q_num} question kept in English")
+                translated['question'] = self.translate_text(question['question'])
             
-            # Translate options
+            # Options - keep format clean
             if 'options' in question:
-                translated['options'] = []
-                for idx, opt in enumerate(question['options']):
-                    trans_opt = self.translate_text_with_retry(opt, max_retries=3)
-                    translated['options'].append(trans_opt)
-                    
-                    if trans_opt == opt:
-                        logger.info(f"Q{q_num} option {idx+1} kept in English")
+                translated['options'] = [
+                    self.translate_text(opt) for opt in question['options']
+                ]
             
-            # Translate answer
+            # Answer - keep option letter
             if 'answer' in question:
-                original = question['answer']
-                translated['answer'] = self.translate_text_with_retry(original, max_retries=3)
-                
-                if translated['answer'] == original:
-                    logger.info(f"Q{q_num} answer kept in English")
+                # Extract "Option A: " part and translate rest
+                match = re.match(r'(Option [A-D]:\s*)(.*)', question['answer'])
+                if match:
+                    prefix, answer_text = match.groups()
+                    translated['answer'] = f"{prefix}{self.translate_text(answer_text)}"
+                else:
+                    translated['answer'] = self.translate_text(question['answer'])
             
-            # Translate explanation
+            # Explanation
             if 'explanation' in question and question['explanation']:
-                original = question['explanation']
-                translated['explanation'] = self.translate_text_with_retry(original, max_retries=3)
-                
-                if translated['explanation'] == original:
-                    logger.info(f"Q{q_num} explanation kept in English")
+                translated['explanation'] = self.translate_text(question['explanation'])
             
-            # Translate category
-            if 'category' in question and question['category']:
-                original = question['category']
-                translated['category'] = self.translate_text_with_retry(original, max_retries=3)
-                
-                if translated['category'] == original:
-                    logger.info(f"Q{q_num} category kept in English")
+            # Category - keep English
+            if 'category' in question:
+                translated['category'] = question['category']  # Keep English
+            
+            # Date - keep English format
+            if 'date' in question:
+                translated['date'] = question['date']  # Keep YYYY-MM-DD
             
             return translated
             
         except Exception as e:
-            logger.error(f"Failed to translate question {q_num}: {e}")
-            return question  # Return original if everything fails
+            logger.error(f"Q{q_num} translation failed: {e}")
+            return question
     
     def translate_all(self, questions: list) -> list:
         """Translate all questions"""
         if not self.translator:
             return questions
         
-        translated_questions = []
+        translated = []
         total = len(questions)
         
-        print(f"Translating {total} questions to Gujarati...")
-        print(f"(With 3 retries per field, ~{total * 2} seconds)")
+        print(f"Translating {total} questions with preprocessing...")
         
-        for i, question in enumerate(questions, 1):
-            print(f"Translating Q{i}/{total}...", end=" ")
-            
-            translated_q = self.translate_question(question, i)
-            translated_questions.append(translated_q)
-            
+        for i, q in enumerate(questions, 1):
+            print(f"Q{i}/{total}...", end=" ", flush=True)
+            translated.append(self.translate_question(q, i))
             print("DONE!")
-            
-            # Small delay to avoid rate limits
-            time.sleep(1.5)
+            time.sleep(1.5)  # Rate limit
         
-        return translated_questions
-
+        return translated
 
 def save_questions_json(questions: list, filename: str):
-    """Save questions to JSON file"""
-    try:
-        os.makedirs("output", exist_ok=True)
-        filepath = os.path.join("output", filename)
-        
-        with open(filepath, 'w', encoding='utf-8') as f:
-            json.dump(questions, f, indent=2, ensure_ascii=False)
-        
-        logger.info(f"Saved to {filepath}")
-        print(f"Saved: {filename}")
-        return filepath
-        
-    except Exception as e:
-        logger.error(f"Failed to save: {e}")
-        print(f"Failed to save: {e}")
-        return None
-
+    os.makedirs("output", exist_ok=True)
+    filepath = os.path.join("output", filename)
+    with open(filepath, 'w', encoding='utf-8') as f:
+        json.dump(questions, f, indent=2, ensure_ascii=False)
+    print(f"{filename}")
+    return filepath
 
 def translate_questions_with_ai(questions: list) -> list:
-    """Main translation function with retry logic"""
-    print(f"\n Starting Translation (Deep Translator with 3 retries)")
-    start_time = time.time()
+    print(f"\nEnhanced Google Translate (with Pre/Post Processing)")
+    start = time.time()
     
-    # Step 1: Save English
-    print("\n Saving English questions...")
+    print("\nSaving English...")
     save_questions_json(questions, "questions_english.json")
     
-    # Step 2: Translate to Gujarati
-    print("\n Translating to Gujarati (with retry)...")
-    translator = DeepTranslatorGU()
+    print("\nTranslating to Gujarati...")
+    translator = ImprovedGujaratiTranslator()
     
     if not translator.translator:
-        print("Translation skipped")
         save_questions_json(questions, "questions_gujarati.json")
         return questions
     
-    gujarati_questions = translator.translate_all(questions)
+    gujarati = translator.translate_all(questions)
     
-    # Save Gujarati
-    print("\n Saving Gujarati questions...")
-    save_questions_json(gujarati_questions, "questions_gujarati.json")
+    print("\nSaving Gujarati...")
+    save_questions_json(gujarati, "questions_gujarati.json")
     
-    elapsed = time.time() - start_time
-    print(f"\n Translation complete in {elapsed:.1f} seconds")
+    elapsed = time.time() - start
+    print(f"\nDone in {elapsed:.0f}s")
     
-    # Count successful translations
-    success_count = sum(1 for i, q in enumerate(gujarati_questions) 
-                       if q['question'] != questions[i]['question'])
+    # Show comparison
+    if gujarati and len(gujarati) > 0:
+        print("\nSample Translation:")
+        print(f"EN: {questions[0]['question'][:70]}...")
+        print(f"GU: {gujarati[0]['question'][:70]}...")
     
-    print(f"\n Translation Stats:")
-    print(f"Total questions: {len(questions)}")
-    print(f"Successfully translated: {success_count}")
-    print(f"Kept in English: {len(questions) - success_count}")
-    
-    # Show sample
-    print(f"\n Sample (Q1):")
-    print(f"English:  {questions[0]['question'][:70]}...")
-    print(f"Gujarati: {gujarati_questions[0]['question'][:70]}...")
-    
-    return gujarati_questions
+    return gujarati
