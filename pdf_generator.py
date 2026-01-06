@@ -5,24 +5,28 @@ from typing import List, Dict
 from weasyprint import HTML, CSS
 from weasyprint.text.fonts import FontConfiguration
 
+
 logger = logging.getLogger(__name__)
 
+
 class PDFGenerator:
-    def __init__(self, output_dir: str = "output", language: str = 'en', watermark_image: str = None):
+    def __init__(self, output_dir: str = "output", language: str = 'gu', watermark_image: str = None):
         self.output_dir = output_dir
         self.language = language
         self.watermark_image = watermark_image
+        self.app_url = "https://play.google.com/store/apps/details?id=com.pragatisetu.app"
+        self.brand_name = "Indiabix"
         os.makedirs(output_dir, exist_ok=True)
         
     def generate_pdf(self, questions: List[Dict], start_date: str, end_date: str) -> str:
-        """Generate PDF using WeasyPrint (proper Gujarati rendering)"""
+        """Generate detailed PDF using WeasyPrint with proper word wrapping"""
         try:
             timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-            filename = f"current_affairs_{timestamp}.pdf"
+            filename = f"current_affairs_detailed_{timestamp}.pdf"
             filepath = os.path.join(self.output_dir, filename)
             
-            logger.info(f"Generating PDF: {filename}")
-            print("Building PDF with WeasyPrint...")
+            logger.info(f"Generating detailed PDF: {filename}")
+            print("Building detailed PDF with WeasyPrint...")
             
             # Build HTML content
             html_content = self._build_html(questions, start_date, end_date)
@@ -30,19 +34,27 @@ class PDFGenerator:
             # Configure fonts
             font_config = FontConfiguration()
             
-            # CSS styling
+            # CSS styling with proper word wrapping and box styling
             css = CSS(string='''
                 @page {
                     size: A4;
-                    margin: 2cm;
+                    margin: 1.5cm 1.5cm 2cm 1.5cm;
+                    @bottom-right {
+                        content: "Download Pragati Setu";
+                        font-family: "Helvetica", "Arial", sans-serif;
+                        font-size: 8pt;
+                        color: #0066cc;
+                    }
                 }
                 
                 body {
                     font-family: "Noto Sans Gujarati", "Lohit Gujarati", sans-serif;
-                    font-size: 11pt;
-                    line-height: 1.6;
+                    font-size: 10pt;
+                    line-height: 1.5;
                     color: #333;
                     position: relative;
+                    margin: 0;
+                    padding: 0;
                 }
                 
                 .english {
@@ -54,16 +66,17 @@ class PDFGenerator:
                     top: 50%;
                     left: 50%;
                     transform: translate(-50%, -50%);
-                    opacity: 0.08;
-                    width: 350px;
-                    height: auto;
+                    opacity: 0.10;
+                    width: 500px;
+                    height: 500px;
                     z-index: 0;
                     pointer-events: none;
                 }
                 
                 .watermark-container img {
                     width: 100%;
-                    height: auto;
+                    height: 100%;
+                    object-fit: contain;
                 }
                 
                 .content {
@@ -73,16 +86,23 @@ class PDFGenerator:
                 
                 .title-bar {
                     text-align: center;
-                    border-bottom: 2px solid #1a4d8f;
-                    padding-bottom: 10px;
-                    margin-bottom: 15px;
+                    border-bottom: 3px solid #1a4d8f;
+                    padding-bottom: 12px;
+                    margin-bottom: 18px;
                 }
                 
                 .english-title {
                     font-family: "Helvetica", "Arial", sans-serif;
-                    font-size: 18pt;
+                    font-size: 20pt;
                     font-weight: bold;
                     color: #1a4d8f;
+                    margin: 0 0 6px 0;
+                }
+                
+                .subtitle {
+                    font-family: "Helvetica", "Arial", sans-serif;
+                    font-size: 11pt;
+                    color: #555;
                     margin: 0;
                 }
                 
@@ -90,13 +110,18 @@ class PDFGenerator:
                     text-align: center;
                     color: #666;
                     font-size: 10pt;
-                    margin-bottom: 20px;
+                    margin-bottom: 18px;
                     font-family: "Helvetica", "Arial", sans-serif;
+                    font-weight: bold;
                 }
                 
                 .question {
                     margin-bottom: 20px;
                     page-break-inside: avoid;
+                    padding: 12px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 4px;
+                    background-color: #fafafa;
                 }
                 
                 .question-header {
@@ -104,35 +129,77 @@ class PDFGenerator:
                     font-weight: bold;
                     margin-bottom: 8px;
                     font-size: 11pt;
+                    font-family: "Helvetica", "Arial", sans-serif;
                 }
                 
                 .question-text {
                     margin-bottom: 10px;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                    hyphens: auto;
                 }
                 
                 .options {
-                    margin-left: 20px;
-                    margin-bottom: 10px;
+                    margin-left: 15px;
+                    margin-bottom: 12px;
                 }
                 
                 .option {
-                    margin-bottom: 5px;
+                    margin-bottom: 6px;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                    hyphens: auto;
                 }
                 
                 .answer {
-                    color: #2d5f2e;
+                    color: #1a1a1a;
                     font-weight: bold;
                     margin-left: 10px;
                     margin-bottom: 8px;
+                    padding: 8px;
+                    background-color: #e8f5e9;
+                    border-left: 4px solid #2d5f2e;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                    hyphens: auto;
                 }
                 
                 .explanation {
-                    color: #4a4a4a;
+                    color: #3a3a3a;
                     font-size: 9pt;
-                    margin-left: 20px;
+                    margin-left: 15px;
                     margin-right: 10px;
+                    margin-top: 10px;
+                    padding: 10px;
+                    background-color: #f5f5f5;
+                    border-left: 3px solid #0066cc;
                     text-align: justify;
-                    margin-bottom: 15px;
+                    word-wrap: break-word;
+                    overflow-wrap: break-word;
+                    hyphens: auto;
+                    line-height: 1.6;
+                }
+                
+                .explanation-title {
+                    font-weight: bold;
+                    color: #0066cc;
+                    margin-bottom: 6px;
+                    font-size: 9pt;
+                }
+                
+                .summary {
+                    margin-top: 20px;
+                    font-family: "Helvetica", "Arial", sans-serif;
+                    font-size: 10pt;
+                    padding: 12px;
+                    border: 1px solid #ddd;
+                    background-color: #f9f9f9;
+                    border-radius: 4px;
+                }
+                
+                .summary p {
+                    margin: 6px 0;
+                    line-height: 1.5;
                 }
             ''', font_config=font_config)
             
@@ -143,8 +210,11 @@ class PDFGenerator:
                 font_config=font_config
             )
             
-            logger.info(f"PDF generated successfully: {filepath}")
-            print(f"PDF created: {filepath}")
+            logger.info(f"Detailed PDF generated successfully: {filepath}")
+            print(f"Detailed PDF created: {filepath}")
+            print(f"App Link: {self.app_url}")
+            print(f"Brand: {self.brand_name}")
+            print(f"Total Questions: {len(questions)}")
             
             return filepath
             
@@ -154,7 +224,7 @@ class PDFGenerator:
             return None
     
     def _build_html(self, questions: List[Dict], start_date: str, end_date: str) -> str:
-        """Build HTML content for PDF"""
+        """Build HTML content for detailed PDF"""
         
         # Start HTML
         html = '''<!DOCTYPE html>
@@ -166,26 +236,25 @@ class PDFGenerator:
 <body>
 '''
         
-        # Add Pragati Setu logo watermark - USE file:// URI for WeasyPrint
+        # Add watermark
         if self.watermark_image and os.path.exists(self.watermark_image):
-            # Convert to file URI
             image_uri = f"file://{os.path.abspath(self.watermark_image)}"
-            print(f"Using watermark: {image_uri}")
+            logger.info(f"Using watermark: {image_uri}")
             html += f'''<div class="watermark-container">
     <img src="{image_uri}" alt="Logo" />
 </div>
 '''
-        else:
-            print(f"No watermark image found")
         
         # Content wrapper
         html += '<div class="content">'
         
+        # Title section
         html += '''<div class="title-bar">
-    <p class="english-title">Current Affairs Questions & Answers</p>
+    <p class="english-title">Indiabix Current Affairs</p>
+    <p class="subtitle">Questions & Answers with Detailed Explanations</p>
 </div>'''
         
-        # Date range in English
+        # Date range
         html += f'<div class="date-range">{start_date} to {end_date}</div>'
         
         # Questions
@@ -206,20 +275,29 @@ class PDFGenerator:
             for opt_idx, option in enumerate(options):
                 if opt_idx < len(option_letters):
                     option_text = self._escape_html(option)
-                    html += f'<div class="option"><span class="english">❍ {option_letters[opt_idx]})</span> {option_text}</div>'
+                    html += f'<div class="option"><span class="english"><b>{option_letters[opt_idx]}.</b></span> {option_text}</div>'
             html += '</div>'
             
             # Answer
             answer = self._escape_html(q.get('answer', 'Not available'))
-            html += f'<div class="answer"><span class="english">✓</span> {answer}</div>'
+            html += f'<div class="answer"><span class="english">✓ Answer:</span> {answer}</div>'
             
             # Explanation
             explanation = q.get('explanation', '')
             if explanation and explanation.strip():
                 exp_text = self._escape_html(explanation)
-                html += f'<div class="explanation">સમજૂતી: {exp_text}</div>'
+                html += f'<div class="explanation"><div class="explanation-title">સમજૂતી (Explanation):</div>{exp_text}</div>'
             
             html += '</div>'  # Close question
+        
+        # Summary section
+        html += f'''
+<div class="summary">
+    <p><b>Total Questions:</b> {len(questions)}</p>
+    <p><b>Brand:</b> {self.brand_name}</p>
+    <p><b>App:</b> <a href="{self.app_url}">Download Pragati Setu</a></p>
+</div>
+'''
         
         # Close content wrapper
         html += '</div>'
