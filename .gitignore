@@ -38,5 +38,5 @@ page_source.html
 .env
 
 # Output PDFs (but keep directory)
-output/*
-!output/.gitkeep
+# output/*
+# !output/.gitkeep
