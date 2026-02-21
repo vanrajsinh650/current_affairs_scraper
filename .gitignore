@@ -5,7 +5,7 @@ ENV/
 .venv/
 
 # Output PDFs
-output/
+# output/
 
 # Log files
 *.log
