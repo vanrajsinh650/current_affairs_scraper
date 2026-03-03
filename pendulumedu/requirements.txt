@@ -1,0 +1,22 @@
+# PendulumEdu Current Affairs Scraper - Dependencies
+# Install with: pip install -r requirements.txt
+
+# HTTP & Scraping
+requests==2.32.5
+beautifulsoup4==4.12.3
+lxml==6.0.2
+urllib3==2.6.2
+
+# Translation
+deep-translator==1.11.4
+
+# PDF Generation
+weasyprint==68.1
+reportlab==4.0.7
+pillow==12.0.0
+
+# Environment & Config
+python-dotenv==1.2.1
+
+# Utilities
+pytz==2025.2

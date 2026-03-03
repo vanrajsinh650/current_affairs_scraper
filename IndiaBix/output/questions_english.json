@@ -1,422 +1,296 @@
 [
   {
     "question_no": 1,
-    "question": "Who won the gold medal in the men’s heptathlon at the Asian Indoor Athletics Championships 2026, setting a new national indoor record with 5,993 points?",
+    "question": "Which digital payments company launched an AI-powered natural language search feature built on Microsoft Foundry?",
     "options": [
-      "Tejaswin Shankar",
-      "Tajinderpal Singh Toor",
-      "Ancy Sojan",
-      "Pooja"
+      "Paytm",
+      "Google Pay",
+      "Amazon Pay",
+      "PhonePe"
     ],
-    "answer": "Option A: Tejaswin Shankar",
-    "explanation": "Tejaswin Shankar secured a historic gold medal in the men’s heptathlon at the Asian Indoor Athletics Championships 2026 held in Tianjin. He accumulated 5,993 points, establishing a new national indoor record and surpassing his previous best of 5,650 points set in 2021. His performance marked India’s only gold medal at the championship and played a crucial role in the country finishing sixth overall with five medals. The achievement highlights India’s growing strength in multi-event athletics on the continental stage.",
-    "category": "Sports",
-    "date": "2026-02-18"
+    "answer": "Option D: PhonePe",
+    "explanation": "PhonePe introduced an AI-powered natural language search feature built on Microsoft Foundry, transforming how users interact with the app. The feature enables customers to make payments, recharge FASTag, check gold prices, and track transactions using simple voice or text commands. Designed with a hybrid AI model combining on-device and cloud inferencing, it ensures strong privacy safeguards and secure data handling. The conversational interface replaces traditional menu-based navigation with intent-driven routing, making digital payments more intuitive and personalised. With millions of users and merchants across India, this innovation significantly enhances convenience and accessibility in fintech services.",
+    "category": "Technology",
+    "date": "2026-03-01"
   },
   {
     "question_no": 2,
-    "question": "Which public sector bank launched an Online Death Claim Settlement Portal with a 15-day timeline and no surety requirement for claims up to ₹15 lakh?",
+    "question": "Which state government announced the launch of CM Shri Schools on the lines of the PM Shri Schools initiative?",
     "options": [
-      "Punjab National Bank",
-      "Bank of Baroda",
-      "Indian Overseas Bank",
-      "Canara Bank"
+      "Haryana",
+      "Punjab",
+      "Rajasthan",
+      "Uttar Pradesh"
     ],
-    "answer": "Option C: Indian Overseas Bank",
-    "explanation": "Indian Overseas Bank introduced an Online Death Claim Settlement Portal to provide a simplified, transparent, and time-bound solution for families and legal heirs. The digital platform enables online submission of claimant details, document uploads, and real-time tracking of claim status, eliminating the need for repeated branch visits. For claims up to ₹15 lakh, the bank has removed the requirement of third-party surety and reduced documentation, ensuring settlement within 15 days. Alongside this initiative, the bank also launched a new corporate website, reinforcing its commitment to digital transformation while maintaining a compassionate, customer-centric approach.",
-    "category": "Banking",
-    "date": "2026-02-18"
+    "answer": "Option A: Haryana",
+    "explanation": "Haryana has announced the launch of CM Shri Schools, modelled on the central government’s PM Shri Schools initiative to enhance the quality of state-run education. The new schools will follow the CBSE curriculum pattern, ensuring structured academic standards, skill-based learning, and improved preparation for competitive examinations. The initiative also emphasizes modern infrastructure and better learning outcomes. Additionally, the state continues to implement 25% reservation for Economically Weaker Sections under the Right to Education Act, promoting inclusive access to quality education. This combined reform approach aims to strengthen educational standards and equity across the state.",
+    "category": "State",
+    "date": "2026-03-01"
   },
   {
     "question_no": 3,
-    "question": "Which country held talks with India to boost cooperation in telecom, digital economy, and emerging technologies?",
+    "question": "Which state government launched the ‘Meri Rasoi’ scheme to provide free food kits to 40 lakh blue card holder families?",
     "options": [
-      "Ireland",
-      "Germany",
-      "Australia",
-      "Japan"
+      "Punjab",
+      "Haryana",
+      "Rajasthan",
+      "Uttar Pradesh"
     ],
-    "answer": "Option A: Ireland",
-    "explanation": "India held high-level discussions with Ireland to strengthen cooperation in telecom and emerging technologies. The talks involved Union Minister Jyotiraditya Scindia and Ireland’s Jack Chambers, focusing on innovation-driven partnerships. Key areas included India’s Digital Public Infrastructure, such as UPI and DBT, rapid 5G expansion, and rural broadband development. Both nations also explored collaborative opportunities in advanced sectors like Quantum Communications, Artificial Intelligence, and regulatory innovation, highlighting their shared commitment to deepening bilateral relations through technology and digital transformation initiatives.",
-    "category": "International",
-    "date": "2026-02-18"
+    "answer": "Option A: Punjab",
+    "explanation": "Punjab launched the ‘Meri Rasoi’ scheme to provide free food kits to nearly 40 lakh economically weaker families holding blue cards. The initiative, announced by Chief Minister Bhagwant Mann ahead of the state’s Budget Session, aims to address nutritional gaps among low-income households. Under the first phase from April to June 2026, beneficiaries will receive essential items such as chana dal, sugar, iodized salt, turmeric powder, and mustard oil. The scheme focuses on improving child health, reducing malnutrition, strengthening food security, and ensuring that vulnerable families receive balanced and nutritious food supplies regularly.",
+    "category": "State",
+    "date": "2026-03-01"
   },
   {
     "question_no": 4,
-    "question": "Who was named the BBC Indian Sportswoman of the Year 2025 after leading India to a historic Women’s World Cup victory?",
+    "question": "On which date is National Science Day observed every year in India to honour the discovery of the Raman Effect?",
     "options": [
-      "Divya Deshmukh",
-      "Smriti Mandhana",
-      "Preethi Pal",
-      "Anjali Bhagwat"
+      "February 28",
+      "January 26",
+      "March 8",
+      "April 15"
     ],
-    "answer": "Option B: Smriti Mandhana",
-    "explanation": "Smriti Mandhana was honoured as the BBC Indian Sportswoman of the Year 2025 in recognition of her exceptional leadership and performance. She guided India to a historic Women’s World Cup triumph, marking a significant milestone in Indian women’s cricket. Other notable contenders included Divya Deshmukh, a Chess World Cup winner, and Preethi Pal, a Paralympic medalist. Veteran shooter Anjali Bhagwat received the Lifetime Achievement Award, highlighting her long-standing contribution to Indian shooting sports.",
-    "category": "Sports",
-    "date": "2026-02-18"
+    "answer": "Option A: February 28",
+    "explanation": "February 28 is observed annually as National Science Day in India to commemorate the discovery of the Raman Effect by Sir C. V. Raman in 1928. This groundbreaking work explained the scattering of light through transparent materials and later earned him the Nobel Prize in Physics in 1930, making him the first Asian Nobel laureate in science. The Government of India officially designated this date as National Science Day in 1986. The occasion promotes scientific awareness, innovation, and research culture, while celebrating India’s significant contributions to global scientific advancement and encouraging future generations in STEM fields.",
+    "category": "Important Days",
+    "date": "2026-03-01"
   },
   {
     "question_no": 5,
-    "question": "Which city hosted the 23rd BioAsia 2026 Summit?",
+    "question": "Who has taken additional charge as the Chief Executive Officer (CEO) of NITI Aayog?",
     "options": [
-      "Hyderabad",
-      "Bengaluru",
-      "Chennai",
-      "Pune"
+      "BVR Subrahmanyam",
+      "Amitabh Kant",
+      "Nidhi Chhibber",
+      "Rajiv Kumar"
     ],
-    "answer": "Option A: Hyderabad",
-    "explanation": "The 23rd BioAsia 2026 Summit was inaugurated in Hyderabad by Telangana Chief Minister A. Revanth Reddy. The summit, themed ‘TechBio Unleashed – AI, Automation, and Revolutionary Changes in Life Sciences,’ brought together global experts and industry leaders. Over two days, participants discussed AI-driven research and development, next-generation biologics, digital transformation, and the evolving future of life sciences. The event also highlighted Telangana’s strategic vision to position itself as a world-class biopharma hub by 2047, reinforcing its growing prominence in biotechnology and pharmaceutical innovation.",
-    "category": "Places",
-    "date": "2026-02-18"
+    "answer": "Option C: Nidhi Chhibber",
+    "explanation": "Nidhi Chhibber has taken additional charge as the Chief Executive Officer of NITI Aayog following the completion of BVR Subrahmanyam’s three-year term in February 2026. A 1994-batch IAS officer of the Chhattisgarh cadre, she currently serves as Director General of the Development Monitoring and Evaluation Office (DMEO) under NITI Aayog. She has also previously held the position of Chairperson of the Central Board of Secondary Education. Her extensive experience in policy monitoring, evaluation, and education sector reforms positions her to strengthen data-driven governance and performance assessment within India’s premier policy think tank.",
+    "category": "Awards and Honours",
+    "date": "2026-03-01"
   },
   {
     "question_no": 6,
-    "question": "In which city was the International Conference on Dam Safety 2026 held, bringing together global experts and regulators?",
+    "question": "Which country signed a new MoU with India to strengthen cooperation in forests, wildlife, biodiversity conservation, and climate change?",
     "options": [
-      "Hyderabad",
-      "Chennai",
-      "Mumbai",
-      "Bengaluru"
+      "Bhutan",
+      "Bangladesh",
+      "Sri Lanka",
+      "Nepal"
     ],
-    "answer": "Option D: Bengaluru",
-    "explanation": "The International Conference on Dam Safety 2026 was concluded in Bengaluru, attracting global experts, regulators, and practitioners in the field of dam management and water resources. The conference focused on strengthening institutional and technical frameworks under the Dam Safety Act, 2021 and the Dam Rehabilitation and Improvement Project (DRIP). Key discussions revolved around rehabilitation of ageing dams, sediment management strategies, real-time monitoring systems, risk-based decision-making, coordinated flood operations, and enhancing climate resilience, reflecting India’s commitment to ensuring dam safety and sustainable water infrastructure management.",
-    "category": "National",
-    "date": "2026-02-18"
+    "answer": "Option D: Nepal",
+    "explanation": "Nepal signed a new Memorandum of Understanding with India to enhance bilateral cooperation in forests, wildlife protection, biodiversity conservation, and climate change mitigation. The agreement focuses on restoring transboundary wildlife corridors, protecting key species such as tigers, elephants, rhinoceroses, and snow leopards, and strengthening protected area management. It also emphasises combating wildlife crime, improving coordination between enforcement agencies, and promoting capacity building for frontline forest staff. Given the shared ecosystems and migratory wildlife habitats across borders, the partnership supports integrated conservation strategies and climate resilience efforts in the Himalayan and adjoining landscapes.",
+    "category": "International",
+    "date": "2026-03-01"
   },
   {
     "question_no": 7,
-    "question": "Which initiative was launched by Prime Minister Narendra Modi and President Emmanuel Macron to establish a helicopter assembly line in Karnataka?",
+    "question": "Which city will host the AI Summit 2027, as announced?",
     "options": [
-      "C295 Aircraft Project",
-      "Tejas Mk2 Programme",
-      "Dhruv Expansion Mission",
-      "H125 Project"
+      "Zurich",
+      "Geneva",
+      "Bern",
+      "Basel"
     ],
-    "answer": "Option D: H125 Project",
-    "explanation": "The H125 Project was launched by Narendra Modi and Emmanuel Macron as part of an upgraded India-France partnership. The initiative establishes India’s first private-sector helicopter manufacturing facility in Karnataka, featuring a Final Assembly Line for H125 helicopters. The project supports domestic production and exports, with an initial capacity of 10 helicopters per year. Known for its high-altitude performance, including landing on Mount Everest, the H125 will serve civil and potential military needs, strengthening India’s Aatmanirbhar Bharat mission and deepening strategic aerospace collaboration between the two nations.",
-    "category": "Defence",
-    "date": "2026-02-18"
+    "answer": "Option B: Geneva",
+    "explanation": "Geneva will host the AI Summit 2027, marking Switzerland’s significant role in advancing global dialogue on artificial intelligence governance. The announcement was made by Swiss President Guy Parmelin during the AI Impact Summit in New Delhi. Known for being a hub of major international organisations, Geneva provides a neutral platform for multilateral discussions and cooperation. The summit is expected to focus on ethical and inclusive AI frameworks, strengthening partnerships between countries such as Switzerland and India. The hosting also reflects growing global collaboration in AI diplomacy, with the UAE set to host the summit in 2028.",
+    "category": "Places",
+    "date": "2026-03-01"
   },
   {
     "question_no": 8,
-    "question": "Which Indian state is home to the 1,750 MW Demwe Lower hydel project that recently received an environmental clearance extension till 2037?",
-    "options": [
-      "Sikkim",
-      "Arunachal Pradesh",
-      "Himachal Pradesh",
-      "Uttarakhand"
-    ],
-    "answer": "Option B: Arunachal Pradesh",
-    "explanation": "Arunachal Pradesh hosts the 1,750 MW Demwe Lower hydel project located on the Lohit River. The project has been granted an 11-year extension of environmental clearance, allowing operations to continue until 2037. The approval was given by the Expert Appraisal Committee under the Ministry of Environment after considering litigation delays. However, the extension has generated debate due to earlier interventions by the National Green Tribunal regarding wildlife clearance and biodiversity concerns in the ecologically sensitive Lohit basin region.",
-    "category": "State",
-    "date": "2026-02-18"
-  },
-  {
-    "question_no": 9,
-    "question": "Which quick commerce platform partnered with Bizom to enhance retail execution and brand fulfilment across consumer goods companies?",
-    "options": [
-      "Swiggy Instamart",
-      "Zepto",
-      "Blinkit",
-      "BigBasket"
-    ],
-    "answer": "Option C: Blinkit",
-    "explanation": "Bizom entered into a strategic partnership with Blinkit to strengthen retail execution and improve brand fulfilment capabilities. The collaboration enables brands to enhance fulfilment speed, minimise stock-outs, and access unified real-time inventory data across quick commerce platforms. By offering a single, reliable source of truth for inventory and sales information, the partnership allows brands to scale their reach without investing in new supply chain infrastructure. This initiative supports planning and execution for more than 750 consumer goods companies, contributing to more efficient, technology-driven, and future-ready retail operations across India.",
-    "category": "Business",
-    "date": "2026-02-18"
-  },
-  {
-    "question_no": 10,
-    "question": "Which organisation partnered with GalaxEye to globally promote and sell its SyncFused OptoSAR satellite imagery?",
+    "question": "Which organisation successfully conducted three flight trials of the indigenous VSHORADS missile system, making it ready for induction into the Indian armed forces?",
     "options": [
       "ISRO",
-      "NSIL",
       "DRDO",
-      "IN-SPACe"
-    ],
-    "answer": "Option B: NSIL",
-    "explanation": "Space startup GalaxEye entered into a strategic agreement with NewSpace India Limited, commonly known as NSIL, which functions as the commercial arm of the Indian Space Research Organisation. This partnership makes GalaxEye the first private Indian satellite operator to establish a data reseller collaboration of this kind. Under the agreement, NSIL will globally market and distribute GalaxEye’s SyncFused OptoSAR satellite imagery. The collaboration aims to provide high-precision data solutions for sectors such as agriculture, disaster management, environmental monitoring, and other critical applications, enhancing India’s presence in the global space-based data market.",
-    "category": "Technology",
-    "date": "2026-02-18"
-  },
-  {
-    "question_no": 1,
-    "question": "According to the latest DFS survey, what percentage of people prefer UPI as their primary transaction mode in India?",
-    "options": [
-      "38%",
-      "57%",
-      "65%",
-      "94%"
-    ],
-    "answer": "Option B: 57%",
-    "explanation": "The latest survey conducted by the Department of Financial Services highlights that 57% of respondents prefer UPI as their primary payment method, making it the most favoured transaction mode in India. This surpasses cash, which stands at 38%. The widespread adoption is driven by instant fund transfers, ease of use, and attractive cashback incentives. A significant portion of users, particularly those aged 18–25, perform multiple digital transactions daily. Additionally, 94% of small merchants now accept UPI, reflecting its deep penetration and the success of government-backed digital payment initiatives.",
-    "category": "Economy",
-    "date": "2026-02-17"
-  },
-  {
-    "question_no": 2,
-    "question": "In which city did President Droupadi Murmu inaugurate the centenary celebrations of the Ol Chiki script?",
-    "options": [
-      "Bhubaneswar",
-      "New Delhi",
-      "Kolkata",
-      "Ranchi"
-    ],
-    "answer": "Option B: New Delhi",
-    "explanation": "Droupadi Murmu inaugurated the centenary celebrations of the Ol Chiki script in New Delhi, marking 100 years since its creation in 1925 by Pandit Raghunath Murmu. The event, organised by the Ministry of Culture, celebrated the script’s role in preserving the Santhali language and strengthening Santal cultural identity. A commemorative coin and postage stamp were also released to honour this milestone. The Ol Chiki script has been instrumental in standardising the written form of Santhali and promoting linguistic pride among the Santal community in India and abroad.",
-    "category": "National",
-    "date": "2026-02-17"
-  },
-  {
-    "question_no": 3,
-    "question": "In which city will the DRDO-awarded Electronic Warfare project be executed?",
-    "options": [
-      "Bengaluru",
-      "Pune",
-      "Hyderabad",
-      "Chennai"
-    ],
-    "answer": "Option C: Hyderabad",
-    "explanation": "The ₹30.01 crore Electronic Warfare project awarded by the Defence Research and Development Organisation to Unistring Tech Solutions will be executed in Hyderabad. The project focuses on developing an advanced EW system with RF signal sensing and processing capabilities tailored to the operational needs of the Indian Armed Forces. Carried out in technical coordination with DRDO laboratories, the initiative supports the Atmanirbhar Bharat vision by strengthening indigenous defence manufacturing and enhancing the country’s electronic warfare preparedness and strategic capabilities.",
-    "category": "Places",
-    "date": "2026-02-17"
-  },
-  {
-    "question_no": 4,
-    "question": "On which date is World Human Spirit Day observed annually?",
-    "options": [
-      "February 17",
-      "March 21",
-      "April 7",
-      "January 30"
-    ],
-    "answer": "Option A: February 17",
-    "explanation": "World Human Spirit Day is observed annually on February 17. Established in 2003 by philosopher Michael Levy, the day promotes self-reflection, mindfulness, and a deeper spiritual connection. It emphasises the importance of nurturing inner peace, building resilience, and recognising the human spirit’s strength in overcoming adversity. Individuals are encouraged to participate in activities such as meditation, retreats, and mindful practices to reduce stress and enhance emotional well-being. The observance serves as a reminder to focus on personal growth and spiritual awakening in today’s fast-paced world.",
-    "category": "Important Days",
-    "date": "2026-02-17"
-  },
-  {
-    "question_no": 5,
-    "question": "Who won the BBC Indian Sportswoman of the Year 2025 award?",
-    "options": [
-      "Divya Deshmukh",
-      "Preethi Pal",
-      "Anjali Bhagwat",
-      "Smriti Mandhana"
-    ],
-    "answer": "Option D: Smriti Mandhana",
-    "explanation": "Smriti Mandhana was honoured with the BBC Indian Sportswoman of the Year 2025 award in recognition of her exceptional performance during India’s Women’s World Cup triumph. At 29, she delivered a historic season, setting remarkable records including the fastest 50-over international century by an Indian and ranking among the top run-scorers in women’s cricket. The award ceremony took place in New Delhi, celebrating excellence across various sports disciplines. Her achievement highlights the rapid growth of women’s cricket in India and underscores her role as an inspiration for aspiring young athletes across the country.",
-    "category": "Sports",
-    "date": "2026-02-17"
-  },
-  {
-    "question_no": 6,
-    "question": "At which city was the MILAN Village inaugurated as part of Exercise MILAN 2026?",
-    "options": [
-      "Kochi",
-      "Mumbai",
-      "Chennai",
-      "Visakhapatnam"
-    ],
-    "answer": "Option D: Visakhapatnam",
-    "explanation": "The MILAN Village was inaugurated at the Eastern Naval Command in Visakhapatnam during Exercise MILAN 2026, a flagship multinational naval exercise hosted by the Indian Navy. The initiative brings together naval personnel and delegates from more than 70 countries to strengthen maritime cooperation and mutual understanding. The village showcases Indian cultural performances, regional cuisine, and naval-themed exhibits, fostering camaraderie and cultural exchange among participating nations while enhancing collaborative maritime security efforts in the Indo-Pacific region.",
-    "category": "Defence",
-    "date": "2026-02-17"
-  },
-  {
-    "question_no": 7,
-    "question": "At which organisation did Raksha Mantri Rajnath Singh inaugurate the new Missile Integration Facility?",
-    "options": [
-      "DRDO",
-      "BEL",
       "HAL",
-      "ISRO"
+      "BEL"
     ],
-    "answer": "Option B: BEL",
-    "explanation": "Raksha Mantri Rajnath Singh inaugurated the Missile Integration Facility at Bharat Electronics Limited (BEL) in Bengaluru. The facility strengthens indigenous missile system integration and supports faster deployment of advanced air defence systems like Akash. During the event, the Akash 3rd and 4th Regiment Combat Systems were flagged off, and the Mountain Fire Control Radar was unveiled. BEL also launched its AI Policy and inaugurated a Centre of Excellence for Artificial Intelligence in Pune, enhancing India’s self-reliant defence manufacturing capabilities and promoting advanced technologies such as AI-driven threat detection and network-centric warfare systems.",
+    "answer": "Option B: DRDO",
+    "explanation": "DRDO successfully carried out three consecutive flight trials of the indigenous VSHORADS missile system from Chandipur, Odisha, demonstrating its operational readiness. The Very Short Range Air Defence System is a man-portable missile designed to intercept low-flying aircraft, helicopters, drones, and high-speed aerial threats. Developed under the Aatmanirbhar Bharat initiative, the system was tested in its final deployment configuration with trained field operators handling target acquisition and firing. Data from telemetry, radar, and electro-optical tracking confirmed its precision and effectiveness, strengthening India’s short-range and layered air defence capabilities significantly.",
     "category": "Defence",
-    "date": "2026-02-17"
-  },
-  {
-    "question_no": 8,
-    "question": "Who will launch SAHI and BODH at the India AI Summit 2026?",
-    "options": [
-      "Ashwini Vaishnaw",
-      "Mansukh Mandaviya",
-      "JP Nadda",
-      "Piyush Goyal"
-    ],
-    "answer": "Option C: JP Nadda",
-    "explanation": "JP Nadda will launch SAHI and BODH at the India AI Summit 2026 at Bharat Mandapam. SAHI (Strategy for Artificial Intelligence in Healthcare for India) provides a governance framework for ethical and responsible AI adoption in healthcare. BODH (Benchmarking Open Data Platform for Health AI), developed in collaboration with Indian Institute of Technology Kanpur and the National Health Authority, enables privacy-preserving evaluation of AI models using real-world health data under the Ayushman Bharat Digital Mission, strengthening India’s digital health ecosystem.",
-    "category": "Persons",
-    "date": "2026-02-17"
+    "date": "2026-03-01"
   },
   {
     "question_no": 9,
-    "question": "What rank did India achieve in the Henley Passport Index 2026?",
+    "question": "Which former India captain will have a stand named after him at Mumbai’s Wankhede Stadium?",
     "options": [
-      "75th",
-      "71st",
-      "85th",
-      "56th"
+      "Kapil Dev",
+      "Sunil Gavaskar",
+      "Ravi Shastri",
+      "Sourav Ganguly"
     ],
-    "answer": "Option A: 75th",
-    "explanation": "In the Henley Passport Index 2026, India secured the 75th position, marking a significant improvement from its 85th rank in 2025. This 10-place jump represents one of the country’s strongest performances in recent years. The ranking reflects the number of destinations Indian passport holders can access without a prior visa, including visa-free, visa-on-arrival, and e-visa options. Indian citizens now have access to 56 countries, up from 52 the previous year, enhancing global mobility for tourism and business travel while improving India’s standing in international travel freedom.",
-    "category": "National",
-    "date": "2026-02-17"
+    "answer": "Option C: Ravi Shastri",
+    "explanation": "Ravi Shastri will have a stand named after him at the iconic Wankhede Stadium in Mumbai following approval by the Mumbai Cricket Association during its Apex Council meeting. The Level 1 Stand below the Press Box will bear his name, recognising his long and multifaceted contribution to Indian cricket as a player, captain, head coach, and commentator. A former all-rounder, he was part of India’s 1983 World Cup era and later guided the national team to significant overseas Test victories as coach. The tribute highlights Mumbai’s rich cricketing legacy and honours his enduring association with the sport.",
+    "category": "Sports",
+    "date": "2026-03-01"
   },
   {
     "question_no": 10,
-    "question": "Who was sworn in as the new Prime Minister of Bangladesh after the 13th Parliamentary Elections?",
+    "question": "On which date will World NGO Day 2026 be observed globally?",
     "options": [
-      "Tarique Rahman",
-      "Muhammad Yunus",
-      "Khaleda Zia",
-      "Mohammed Shahabuddin"
+      "February 24",
+      "February 27",
+      "March 1",
+      "March 8"
     ],
-    "answer": "Option A: Tarique Rahman",
-    "explanation": "Tarique Rahman was sworn in as the Prime Minister of Bangladesh following a decisive victory in the 13th Parliamentary Elections, where his party secured 209 out of 297 seats. The oath of office was administered by Mohammed Shahabuddin at the South Plaza of the Jatiya Sangsad in Dhaka. His appointment marks a significant political shift, ending the interim leadership of Muhammad Yunus and beginning a new chapter focused on economic recovery, institutional stability, and national reconciliation.",
-    "category": "International",
-    "date": "2026-02-17"
+    "answer": "Option B: February 27",
+    "explanation": "February 27 is observed globally as World NGO Day in 2026, recognizing the vital contributions of non-governmental organisations across sectors such as education, healthcare, environmental protection, human rights, and disaster relief. The day serves as an international platform to appreciate NGOs for their grassroots efforts and to promote awareness, advocacy, and collaboration. It highlights the role of civil society in addressing social inequalities, poverty reduction, and sustainable development. The observance encourages citizens, institutions, and governments to actively participate through volunteering, donations, partnerships, and community initiatives that strengthen the global NGO ecosystem.",
+    "category": "Important Days",
+    "date": "2026-03-01"
   },
   {
     "question_no": 1,
-    "question": "What is the name of the proposed national museum into which the North and South Blocks will be converted?",
+    "question": "Which company secured a ₹36 crore order to supply fabricated steel products for a BHEL project?",
     "options": [
-      "Bharat Heritage Museum",
-      "Yuge Yugeen Bharat",
-      "National Civilisation Gallery",
-      "Viksit Bharat Museum"
+      "Larsen & Toubro Limited",
+      "BMW Ventures Limited",
+      "Tata Projects Limited",
+      "JSW Infrastructure Limited"
     ],
-    "answer": "Option B: Yuge Yugeen Bharat",
-    "explanation": "The Union Cabinet has approved the conversion of North Block and South Block into the ‘Yuge Yugeen Bharat’ National Museum, marking a historic transformation in India’s administrative landscape. These iconic buildings, constructed during British rule, have served as key centres of governance since Independence. With the inauguration of the new Prime Minister’s Office, Seva Teerth, by Narendra Modi, Cabinet meetings will shift from South Block. The proposed museum will showcase India’s civilisational journey, freedom struggle, post-independence development, and modern global aspirations, symbolising the transition from colonial legacy to citizen-centric governance.",
-    "category": "National",
-    "date": "2026-02-16"
+    "answer": "Option B: BMW Ventures Limited",
+    "explanation": "BMW Ventures Limited secured a ₹36 crore contract to supply fabricated steel products for a major project executed by Bharat Heavy Electricals Limited (BHEL). The order signifies the company’s strategic expansion into large-scale infrastructure and power sector projects, moving beyond its traditional operational scope. The contract includes the supply of structural steel fabrication and related critical components essential for thermal or industrial infrastructure initiatives. The execution timeline is estimated at 12–18 months, enhancing the company’s order book strength, revenue visibility, and positioning within India’s rapidly growing infrastructure and energy sector.",
+    "category": "Business",
+    "date": "2026-02-28"
   },
   {
     "question_no": 2,
-    "question": "In which state was the CBDC-based Digital Food Coupon Pilot launched to ensure secure and transparent subsidy distribution?",
+    "question": "Which vessel was commissioned as the fourth ship of the Anti-Submarine Warfare Shallow Water Craft (ASW-SWC) project into the Indian Navy in February 2026?",
     "options": [
-      "Gujarat",
-      "Maharashtra",
-      "Rajasthan",
-      "Karnataka"
+      "INS Kavaratti",
+      "INS Androth",
+      "INS Anjadip",
+      "INS Kadmatt"
     ],
-    "answer": "Option A: Gujarat",
-    "explanation": "The pilot project for distributing digital food coupons using Central Bank Digital Currency (CBDC) was launched in Gujarat. This initiative was introduced by the Government of India to enhance targeted welfare delivery through secure and transparent digital payments. By issuing coupons in digital rupee, the scheme ensures leakage-free subsidy transfers directly to beneficiaries. The pilot also promotes financial inclusion and strengthens India’s digital payment ecosystem. The move supports broader CBDC adoption efforts led by the Reserve Bank of India, aiming to modernise welfare distribution through innovative financial technology solutions.",
-    "category": "State",
-    "date": "2026-02-16"
+    "answer": "Option C: INS Anjadip",
+    "explanation": "INS Anjadip was commissioned into the Indian Navy on 27 February 2026 at Chennai Port as the fourth ship under the Anti-Submarine Warfare Shallow Water Craft project. The ceremony was presided over by the Chief of the Naval Staff, marking a major boost to India’s littoral and coastal defence capabilities. The 77-meter vessel, with a displacement of 1,400 tons, is specially designed for shallow-water anti-submarine operations. With over 80% indigenous content, including defence electronics and weapon systems, it highlights India’s strong commitment to self-reliance in defence manufacturing and maritime security preparedness.",
+    "category": "Defence",
+    "date": "2026-02-28"
   },
   {
     "question_no": 3,
-    "question": "In which state did the Prime Minister inaugurate the Kumar Bhaskar Varma Setu over the Brahmaputra River?",
-    "options": [
-      "West Bengal",
-      "Assam",
-      "Tripura",
-      "Manipur"
-    ],
-    "answer": "Option B: Assam",
-    "explanation": "The Kumar Bhaskar Varma Setu was inaugurated by Prime Minister Narendra Modi in the state of Assam. The six-lane extradosed PSC bridge has been constructed over the Brahmaputra River in Guwahati and provides a direct connection between Guwahati and North Guwahati. It is the first extradosed bridge in the Northeast region, marking a significant milestone in regional infrastructure development. The project is expected to improve connectivity, facilitate smoother transportation, and boost trade, tourism, and overall socio-economic integration across Northeast India.",
-    "category": "State",
-    "date": "2026-02-16"
-  },
-  {
-    "question_no": 4,
-    "question": "Which company signed a pact with the Centre for Development of Telematics to develop a tool for detecting quantum-vulnerable cryptographic algorithms?",
-    "options": [
-      "Tata Consultancy Services",
-      "Infosys Limited",
-      "Synergy Quantum",
-      "Wipro Technologies"
-    ],
-    "answer": "Option C: Synergy Quantum",
-    "explanation": "The Centre for Development of Telematics (C-DOT) entered into an agreement with Synergy Quantum India Private Ltd. to enhance cybersecurity preparedness against emerging quantum threats. The collaboration focuses on developing a specialised tool capable of scanning digital devices, identifying existing security mechanisms, and classifying cryptographic algorithms as either quantum-safe or vulnerable. As quantum computing advances, traditional encryption methods may become susceptible to attacks. This initiative aims to safeguard critical sectors such as defence, telecommunications, banking, and government systems by proactively strengthening encryption standards and improving national cybersecurity resilience in the evolving technological landscape.",
-    "category": "Business",
-    "date": "2026-02-16"
-  },
-  {
-    "question_no": 5,
-    "question": "Who won the 2026 FIDE Freestyle Chess World Championship by defeating Fabiano Caruana in the final?",
-    "options": [
-      "Fabiano Caruana",
-      "Levon Aronian",
-      "Magnus Carlsen",
-      "Nodirbek Abdusattorov"
-    ],
-    "answer": "Option C: Magnus Carlsen",
-    "explanation": "Magnus Carlsen secured the 2026 FIDE Freestyle Chess World Championship title after defeating Fabiano Caruana 2.5–1.5 in the final held in Weissenhaus. A draw in the fourth game was sufficient for him to clinch the championship. This victory marked his 21st world title across various chess formats and his first official FIDE-recognised title in the Freestyle (Chess960) category. The tournament carried historic significance as it was the first official FIDE-recognised Freestyle Chess World Championship, further cementing Carlsen’s legacy as one of the greatest chess players in history.",
-    "category": "Sports",
-    "date": "2026-02-16"
-  },
-  {
-    "question_no": 6,
-    "question": "Which country is hosting the first-ever Global South AI Impact Summit 2026 at Bharat Mandapam?",
+    "question": "Which country launched the ‘Zero Prize’, the first-ever results-based environmental award aimed at reducing pollution?",
     "options": [
       "India",
-      "Brazil",
-      "France",
-      "Japan"
+      "China",
+      "United States",
+      "Australia"
     ],
     "answer": "Option A: India",
-    "explanation": "The Global South AI Impact Summit 2026 is being hosted by India at Bharat Mandapam in New Delhi. This historic five-day summit marks the first global AI gathering held in the Global South, bringing together leaders, policymakers, industry experts, and international organisations from over 20 countries. The event focuses on shaping global Artificial Intelligence governance through three guiding pillars—People, Planet, and Progress—and seven thematic “Chakras.” By organising this large-scale international summit, India reinforces its position as a bridge between developed and developing nations and strengthens its leadership role in global digital governance and responsible AI development.",
+    "explanation": "India launched the ‘Zero Prize’ as the country’s first results-based environmental award focused on achieving measurable reductions in air, water, and land pollution. The initiative carries a total corpus of ₹5 crore, with ₹1 crore allocated to each of the three categories. It emphasises verified and quantifiable outcomes through third-party audits and scientific monitoring rather than mere declarations or planned actions. The award aligns with broader national initiatives such as Mission LiFE, Swachh Bharat, and net-zero ambitions, promoting accountability and outcome-driven environmental governance across multiple sectors.",
     "category": "International",
-    "date": "2026-02-16"
+    "date": "2026-02-28"
+  },
+  {
+    "question_no": 4,
+    "question": "Which country’s central bank launched the world’s first sovereign financial cloud platform called “Financial Cloud”?",
+    "options": [
+      "UAE",
+      "Saudi Arabia",
+      "Singapore",
+      "Qatar"
+    ],
+    "answer": "Option A: UAE",
+    "explanation": "The UAE launched the world’s first sovereign financial cloud platform through its Central Bank, marking a significant milestone in digital financial infrastructure. The platform, named Financial Cloud, is a fully regulated and secure cloud environment exclusively designed for licensed financial institutions within the country. It ensures strict compliance with data sovereignty, cybersecurity, and regulatory standards while allowing institutions to host critical workloads and applications. The initiative supports the nation’s broader vision of becoming a global fintech and digital economy hub under UAE Vision 2031 and the Dubai Economic Agenda D33, reducing dependence on global hyperscalers.",
+    "category": "International",
+    "date": "2026-02-28"
+  },
+  {
+    "question_no": 5,
+    "question": "Which Indian airport signed a cargo partnership MoU with Frankfurt Airport to enhance air cargo connectivity between Europe and India?",
+    "options": [
+      "Indira Gandhi International Airport",
+      "Chhatrapati Shivaji Maharaj International Airport",
+      "Rajiv Gandhi International Airport",
+      "Kempegowda International Airport"
+    ],
+    "answer": "Option D: Kempegowda International Airport",
+    "explanation": "Kempegowda International Airport entered into a strategic cargo partnership with Frankfurt Airport to strengthen air cargo connectivity between Europe and India. The Memorandum of Understanding was signed on 25 February 2026 on the sidelines of Air Cargo India 2026 in Mumbai. The collaboration focuses on digitalisation, regulatory optimisation, pharma cargo integrity standards, joint trade lane analytics, and knowledge exchange. This partnership aims to create a more integrated and efficient cargo corridor, reduce dwell times, enhance predictability for airlines and freight forwarders, and support the growing trade volumes between the two regions.",
+    "category": "National",
+    "date": "2026-02-28"
+  },
+  {
+    "question_no": 6,
+    "question": "Which country did the Indian delegation visit to advance cooperation on transboundary rivers and hydropower projects in February 2026?",
+    "options": [
+      "Bhutan",
+      "Nepal",
+      "Bangladesh",
+      "Myanmar"
+    ],
+    "answer": "Option A: Bhutan",
+    "explanation": "Bhutan was the country visited by an Indian delegation led by the Secretary of the Department of Water Resources, River Development & Ganga Rejuvenation to strengthen cooperation on trans-boundary river management and hydropower projects. The discussions included reviewing ongoing joint initiatives, enhancing hydro-meteorological data sharing, improving flood forecasting systems, and addressing climate-related challenges such as glacial lake outburst floods and extreme weather events. The engagement reinforced the long-standing hydropower partnership between the two nations, which dates back to 1961 and was further strengthened through a bilateral agreement signed in 2006, emphasising sustainable and mutually beneficial resource management.",
+    "category": "International",
+    "date": "2026-02-28"
   },
   {
     "question_no": 7,
-    "question": "In which city was the CBDC-based Public Distribution System (PDS) launched by Amit Shah?",
+    "question": "From which date has the Government of India mandated the nationwide sale of E20 petrol with a minimum RON 95 at all retail outlets?",
     "options": [
-      "Ahmedabad",
-      "Gandhinagar",
-      "Jaipur",
-      "Bhopal"
+      "1 January 2026",
+      "15 August 2026",
+      "1 April 2026",
+      "1 July 2025"
     ],
-    "answer": "Option B: Gandhinagar",
-    "explanation": "The CBDC-based Public Distribution System (PDS) was launched in Gandhinagar by Union Home Minister Amit Shah as part of a major reform in India’s food security framework. The initiative integrates Central Bank Digital Currency with ration distribution to ensure transparent, cashless, and leakage-free delivery of food grains. It aligns with the broader vision of Digital India and the governance principle of ‘Minimum Government, Maximum Governance’ promoted by Narendra Modi. The system enhances accountability, eliminates middlemen, and strengthens welfare delivery for millions of beneficiaries across the country.",
-    "category": "Places",
-    "date": "2026-02-16"
+    "answer": "Option C: 1 April 2026",
+    "explanation": "1 April 2026 marks the official nationwide rollout of E20 petrol with a minimum Research Octane Number (RON) of 95 across all petrol pumps in India. The mandate requires every retail outlet, including public sector units and private oil marketing companies, to replace regular E10 petrol with E20 as the standard grade. This move is a major milestone under the Ethanol Blending Programme aimed at reducing crude oil imports, lowering carbon emissions, supporting farmers through higher ethanol demand, and enhancing engine performance with higher-octane fuel. Higher ethanol blends and special fuels remain outside this mandate.",
+    "category": "National",
+    "date": "2026-02-28"
   },
   {
     "question_no": 8,
-    "question": "Which Article of the Indian Constitution grants plenary powers to the Election Commission over electoral rolls and the conduct of elections?",
+    "question": "Who was appointed as the Managing Director & Chief Executive Officer (MD & CEO) of Hindustan Oil Exploration Company Limited (HOEC) effective 27 February 2026?",
     "options": [
-      "Article 320",
-      "Article 326",
-      "Article 356",
-      "Article 324"
+      "Ramasamy Jeevanandam",
+      "Atison Beats",
+      "Anil Agarwal",
+      "Baroruchi Mishra"
     ],
-    "answer": "Option D: Article 324",
-    "explanation": "Article 324 of the Indian Constitution vests the superintendence, direction, and control of elections in the Election Commission of India (ECI). These plenary powers enable the Commission to oversee electoral rolls and conduct elections to Parliament, state legislatures, and the offices of President and Vice-President. The authority under Article 324 supplements statutory provisions such as the Representation of the People Act, 1950, ensuring that elections remain free, fair, and credible. It also empowers the ECI to adjust procedural timelines, including Special Intensive Revision processes, to maintain transparency and effective electoral roll management.",
-    "category": "Bills and Acts",
-    "date": "2026-02-16"
+    "answer": "Option D: Baroruchi Mishra",
+    "explanation": "Baroruchi Mishra was appointed as the Managing Director and Chief Executive Officer of Hindustan Oil Exploration Company Limited (HOEC), effective 27 February 2026. He succeeded Ramasamy Jeevanandam, who had served in the role since 2019 and stepped down as part of the leadership transition. Mishra brings significant expertise in upstream oil and gas operations, with extensive experience in exploration, production, and business development across Indian and multinational energy firms. His appointment marks an important strategic development for HOEC as it continues to strengthen its position in the independent upstream energy sector.",
+    "category": "Awards and Honours",
+    "date": "2026-02-28"
   },
   {
     "question_no": 9,
-    "question": "In which city will India’s first National Cow Culture Museum be established?",
+    "question": "What was India’s global rank among 84 countries in mental health and well-being for young adults (18–34 years) according to the Global Mind Health 2025 report?",
     "options": [
-      "Varanasi",
-      "Lucknow",
-      "Agra",
-      "Mathura"
+      "45th",
+      "52nd",
+      "60th",
+      "72nd"
     ],
-    "answer": "Option D: Mathura",
-    "explanation": "India’s first National Cow Culture Museum will be set up in Mathura, Uttar Pradesh, within the campus of Pandit Deendayal Upadhyaya Veterinary Science University. The museum aims to present a comprehensive perspective on cattle by integrating cultural heritage with scientific understanding. It will showcase indigenous breeds, dairy production, sustainable agriculture practices, and cattle conservation techniques. Through digital and physical exhibits, the initiative seeks to highlight the economic and agricultural importance of cattle while also strengthening the cultural identity of the Braj region. The project is expected to promote education, tourism, and rural development.",
-    "category": "Places",
-    "date": "2026-02-16"
+    "answer": "Option C: 60th",
+    "explanation": "60th rank was secured by India among 84 countries in the Global Mind Health 2025 assessment focusing on young adults aged 18–34 years. The ranking places the country in the lower-middle tier globally, highlighting significant mental health challenges such as stress, anxiety, depression, and loneliness among youth. The report, prepared by the Sapien Labs Centre for the Future of Mental Health, is based on responses from over one million adults using the Mental Health Quotient (MHQ) tool. It emphasises socioeconomic pressures, cultural stigma, limited access to care, and modern lifestyle factors influencing declining mental well-being among younger generations.",
+    "category": "National",
+    "date": "2026-02-28"
   },
   {
     "question_no": 10,
-    "question": "What was India’s Wholesale Price Index (WPI) inflation rate in January 2026, marking a 10-month high?",
+    "question": "Which Indian state launched ‘Operation Crackdown’ to dismantle organised cybercrime networks?",
     "options": [
-      "1.81%",
-      "2.75%",
-      "0.83%",
-      "2.51%"
+      "Karnataka",
+      "Telangana",
+      "Maharashtra",
+      "Gujarat"
     ],
-    "answer": "Option A: 1.81%",
-    "explanation": "India’s WPI inflation rose to 1.81% in January 2026, reaching a 10-month high and registering the third consecutive monthly increase. The rise was primarily driven by higher prices of food articles, non-food items, and manufactured products such as basic metals and textiles. Food inflation turned positive, and manufacturing inflation strengthened, indicating increasing producer-level price pressures. However, fuel and power remained in deflation, which helped moderate the overall surge. While WPI reflects wholesale-level price changes, the Reserve Bank of India mainly targets CPI inflation for monetary policy decisions, making this divergence significant for economic analysis.",
-    "category": "Economy",
-    "date": "2026-02-16"
+    "answer": "Option B: Telangana",
+    "explanation": "Telangana initiated ‘Operation Crackdown’ as a statewide, multi-agency drive to aggressively target and dismantle organised cybercrime networks. The campaign focuses on offences such as call centre fraud, digital arrest scams, investment fraud, sextortion, and job fraud. Led by the Telangana Police Cyber Security Bureau in coordination with local police, CID, SIT, and other specialised units, the operation involves coordinated raids, arrests, asset seizures, and intelligence-based actions across districts. The initiative aims to disrupt the entire cybercrime ecosystem, from front-end fraudsters to financial handlers, reinforcing a strict zero-tolerance approach toward cyber offenders.",
+    "category": "State",
+    "date": "2026-02-28"
+  },
+  {
+    "question_no": 11,
+    "question": "Which country imposed a temporary ban on poultry meat and table egg imports from India and 39 other nations as a precaution against avian influenza?",
+    "options": [
+      "United Arab Emirates",
+      "Saudi Arabia",
+      "Qatar",
+      "Oman"
+    ],
+    "answer": "Option B: Saudi Arabia",
+    "explanation": "Saudi Arabia imposed a temporary ban on the import of poultry meat and table eggs from 40 countries, including India, as a preventive measure to safeguard public health. The decision was announced by the Saudi Food and Drug Authority (SFDA) following global risk assessments and reported outbreaks of highly pathogenic avian influenza (HPAI) and Newcastle disease. The restriction excludes heat-treated or fully processed poultry products that meet SFDA certification standards. Additionally, partial restrictions were placed on specific regions in 16 other countries, with authorities committing to periodic reviews and updates based on evolving disease situations worldwide.",
+    "category": "International",
+    "date": "2026-02-28"
   }
 ]

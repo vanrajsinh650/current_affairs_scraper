@@ -4,13 +4,10 @@ import sys
 import os
 from pathlib import Path
 
-# Add parent directory to path to import from IndiaBix
-sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from pendulumedu.pendulumedu_scraper import scrape_weekly_questions
-from pendulumedu.config import get_date_range, PDF_OUTPUT_DIR
-from pendulumedu.pendulumedu_pdf_generator import PendulumEduPDFGenerator, PendulumEduPDFGeneratorCompact
-from IndiaBix.translator import translate_questions_with_ai
+from pendulumedu_scraper import scrape_weekly_questions
+from config import get_date_range, PDF_OUTPUT_DIR
+from pendulumedu_pdf_generator import PendulumEduPDFGenerator, PendulumEduPDFGeneratorCompact
+from translator import translate_questions_with_ai
 
 logger = logging.getLogger(__name__)
 
