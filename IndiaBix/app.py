@@ -452,9 +452,14 @@ if st.session_state.running and not st.session_state.done and isinstance(st.sess
     st.session_state.result = res
     st.session_state.logs = log_lines
 
-    # Read file bytes NOW (before rerun wipes the references) and cache in session state
-    st.session_state["_bytes_pdf_detailed"] = read_bytes(res.get("pdf_detailed"))
-    st.session_state["_bytes_pdf_compact"] = read_bytes(res.get("pdf_compact"))
+    # Cache file bytes in session_state BEFORE rerun so download buttons work.
+    # Priority: in-memory bytes (from ReportLab fallback) → then file path read (WeasyPrint)
+    st.session_state["_bytes_pdf_detailed"] = (
+        res.get("pdf_detailed_bytes") or read_bytes(res.get("pdf_detailed"))
+    )
+    st.session_state["_bytes_pdf_compact"] = (
+        res.get("pdf_compact_bytes") or read_bytes(res.get("pdf_compact"))
+    )
     st.session_state["_bytes_json_en"] = read_bytes(res.get("json_english"))
     st.session_state["_bytes_json_gu"] = read_bytes(res.get("json_gujarati"))
 

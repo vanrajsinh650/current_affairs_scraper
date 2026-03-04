@@ -22,78 +22,60 @@ from translator import translate_questions_with_ai
 # on Streamlit Cloud when weasyprint system libs are not installed at import time.
 
 
-# ── ReportLab fallback PDF (works without any system C libraries) ──────────────
-def _generate_pdf_reportlab(questions: list, date_str: str, output_dir: str) -> str:
-    """Generate a clean, readable PDF using pure-Python reportlab as fallback."""
+# ── ReportLab fallback PDF generator (in-memory, English, no system fonts) ────
+def _generate_pdf_bytes_reportlab(questions: list, date_str: str) -> bytes:
+    """Generate PDF bytes in-memory using English text and default fonts.
+    Zero dependencies on system C libraries or Unicode fonts — always works."""
+    from io import BytesIO
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.units import cm
     from reportlab.lib import colors
     from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
-    from reportlab.lib.enums import TA_LEFT, TA_CENTER
+    from reportlab.lib.enums import TA_CENTER
 
-    os.makedirs(output_dir, exist_ok=True)
-    filepath = os.path.join(output_dir, "current_affairs_detailed.pdf")
-
+    buf = BytesIO()
     doc = SimpleDocTemplate(
-        filepath,
-        pagesize=A4,
-        rightMargin=2 * cm,
-        leftMargin=2 * cm,
-        topMargin=2 * cm,
-        bottomMargin=2 * cm,
+        buf, pagesize=A4,
+        rightMargin=2*cm, leftMargin=2*cm, topMargin=2*cm, bottomMargin=2*cm
     )
 
-    styles = getSampleStyleSheet()
-    title_style = ParagraphStyle(
-        "title", parent=styles["Title"],
-        fontSize=18, spaceAfter=6, textColor=colors.HexColor("#1a1a2e"), alignment=TA_CENTER
-    )
-    sub_style = ParagraphStyle(
-        "sub", parent=styles["Normal"],
-        fontSize=11, spaceAfter=12, textColor=colors.HexColor("#555555"), alignment=TA_CENTER
-    )
-    q_style = ParagraphStyle(
-        "question", parent=styles["Normal"],
-        fontSize=11, spaceAfter=4, leading=16, textColor=colors.HexColor("#1a1a2e")
-    )
-    opt_style = ParagraphStyle(
-        "option", parent=styles["Normal"],
-        fontSize=10, spaceAfter=2, leftIndent=20, leading=14, textColor=colors.HexColor("#333333")
-    )
-    ans_style = ParagraphStyle(
-        "answer", parent=styles["Normal"],
-        fontSize=10, spaceAfter=6, leftIndent=20, leading=14,
-        textColor=colors.HexColor("#008000"), fontName="Helvetica-Bold"
-    )
+    s = getSampleStyleSheet()
+    title_st = ParagraphStyle("ps_title", parent=s["Title"],
+        fontSize=18, spaceAfter=4, textColor=colors.HexColor("#1a1a2e"), alignment=TA_CENTER)
+    sub_st = ParagraphStyle("ps_sub", parent=s["Normal"],
+        fontSize=10, spaceAfter=10, textColor=colors.HexColor("#666666"), alignment=TA_CENTER)
+    q_st = ParagraphStyle("ps_q", parent=s["Normal"],
+        fontSize=11, spaceAfter=4, leading=16, textColor=colors.HexColor("#1a1a2e"))
+    opt_st = ParagraphStyle("ps_opt", parent=s["Normal"],
+        fontSize=10, spaceAfter=2, leftIndent=16, leading=14, textColor=colors.HexColor("#333333"))
+    ans_st = ParagraphStyle("ps_ans", parent=s["Normal"],
+        fontSize=10, spaceAfter=8, leftIndent=16, leading=14,
+        textColor=colors.HexColor("#007700"), fontName="Helvetica-Bold")
 
     story = [
-        Paragraph("Pragati Setu — Current Affairs", title_style),
-        Paragraph(f"Date: {date_str} | Questions: {len(questions)}", sub_style),
-        HRFlowable(width="100%", thickness=1, color=colors.HexColor("#cccccc"), spaceAfter=12),
+        Paragraph("Pragati Setu — Current Affairs", title_st),
+        Paragraph(f"Date: {date_str}   |   Questions: {len(questions)}", sub_st),
+        HRFlowable(width="100%", thickness=1, color=colors.HexColor("#cccccc"), spaceAfter=10),
     ]
 
+    labels = ["A", "B", "C", "D"]
     for i, q in enumerate(questions, 1):
-        question_text = q.get("question_gujarati") or q.get("question", "")
-        story.append(Paragraph(f"<b>Q{i}.</b> {question_text}", q_style))
+        # Always use English  text — avoids font encoding crash with Gujarati
+        qt = q.get("question", "").strip()
+        story.append(Paragraph(f"<b>Q{i}.</b> {qt}", q_st))
 
-        options = q.get("options_gujarati") or q.get("options", [])
-        labels = ["A", "B", "C", "D"]
-        for j, opt in enumerate(options):
-            label = labels[j] if j < len(labels) else str(j + 1)
-            story.append(Paragraph(f"{label}. {opt}", opt_style))
+        for j, opt in enumerate(q.get("options", [])):
+            lbl = labels[j] if j < 4 else str(j + 1)
+            story.append(Paragraph(f"{lbl}. {opt}", opt_st))
 
-        correct = q.get("correct_answer_gujarati") or q.get("correct_answer", "")
-        if correct:
-            story.append(Paragraph(f"✓ Answer: {correct}", ans_style))
-
-        story.append(Spacer(1, 8))
-
-        if i % 5 == 0:
-            story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#eeeeee"), spaceAfter=8))
+        ans = q.get("correct_answer", "").strip()
+        if ans:
+            story.append(Paragraph(f"Ans: {ans}", ans_st))
+        story.append(Spacer(1, 6))
 
     doc.build(story)
-    return filepath
+    return buf.getvalue()
 
 
 class CallbackHandler(logging.Handler):
@@ -242,14 +224,13 @@ def run_pipeline(
                 log(f"✅  Compact PDF  → {Path(pdf_compact).name}")
 
         except Exception as pdf_exc:
-            log(f"⚠️  WeasyPrint unavailable ({pdf_exc.__class__.__name__}: {pdf_exc}). Using ReportLab fallback …")
+            log(f"⚠️  WeasyPrint unavailable ({pdf_exc.__class__.__name__}). Using ReportLab fallback …")
             try:
-                _pdf_path = _generate_pdf_reportlab(
-                    questions_gu, date_str, str(output_dir)
-                )
-                result["pdf_detailed"] = _pdf_path
-                result["pdf_compact"] = _pdf_path
-                log(f"✅  PDF (ReportLab) → {Path(_pdf_path).name}")
+                _pdf_bytes = _generate_pdf_bytes_reportlab(questions_gu, date_str)
+                # Store as bytes directly — avoids any file path / disk issues
+                result["pdf_detailed_bytes"] = _pdf_bytes
+                result["pdf_compact_bytes"] = _pdf_bytes
+                log(f"✅  PDF generated in-memory via ReportLab ({len(_pdf_bytes)//1024} KB)")
             except Exception as rl_exc:
                 log(f"❌  ReportLab also failed: {rl_exc}")
 
