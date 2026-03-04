@@ -361,7 +361,7 @@ st.markdown(f"""
 
 # We use columns just for the interactive parts holding the radio & button
 # But wrap them so they sit nicely on mobile
-col_theme, col_deploy = st.columns([1, 1])
+col_theme, = st.columns([1])
 with col_theme:
     new_theme = st.radio(
         "Theme", 
@@ -373,10 +373,6 @@ with col_theme:
     if new_theme != st.session_state.theme:
         st.session_state.theme = new_theme
         st.rerun()
-
-with col_deploy:
-    if st.button("🚀 Deploy", use_container_width=True):
-        st.toast("Deploy command triggered!", icon="🚀")
 
 st.markdown("</div>", unsafe_allow_html=True) # close top-bar-container
 
