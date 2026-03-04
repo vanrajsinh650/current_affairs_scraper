@@ -18,8 +18,8 @@ from typing import Callable, Optional
 # ── Project imports ────────────────────────────────────────────────────────────
 from scraper import scrape_date_wise, create_session
 from translator import translate_questions_with_ai
-from pdf_generator import PDFGenerator
-from pdf_generator_compact import PDFGeneratorCompact
+# NOTE: PDFGenerator is imported lazily inside run_pipeline() to avoid crashes
+# on Streamlit Cloud when weasyprint system libs are not installed at import time.
 
 
 # ── Logging helper that forwards to a callback ─────────────────────────────────
@@ -136,6 +136,10 @@ def run_pipeline(
 
         # ── 4. Generate PDFs ───────────────────────────────────────────────────
         log("📄  Step 3/3 — Generating PDFs …")
+        # Lazy imports so module can be loaded without weasyprint system libs
+        from pdf_generator import PDFGenerator
+        from pdf_generator_compact import PDFGeneratorCompact
+
         watermark_path = script_dir / "pragati_setu.jpg"
         watermark = str(watermark_path) if watermark_path.exists() else None
 

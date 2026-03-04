@@ -2,8 +2,8 @@ import os
 import logging
 from datetime import datetime
 from typing import List, Dict
-from weasyprint import HTML, CSS
-from weasyprint.text.fonts import FontConfiguration
+# NOTE: weasyprint is imported lazily inside generate_pdf() to avoid
+# module-level crashes on Streamlit Cloud when system libs are not yet loaded.
 import base64
 
 
@@ -38,6 +38,10 @@ class PDFGeneratorCompact:
             return None
 
         try:
+            # Lazy imports — avoids module-level crash when system libs are missing
+            from weasyprint import HTML, CSS
+            from weasyprint.text.fonts import FontConfiguration
+
             filename = "current_affairs_compact.pdf"
             filepath = os.path.join(self.output_dir, filename)
             

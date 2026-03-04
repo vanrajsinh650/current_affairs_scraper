@@ -2,8 +2,8 @@ import os
 import logging
 from datetime import datetime
 from typing import List, Dict
-from weasyprint import HTML, CSS
-from weasyprint.text.fonts import FontConfiguration
+# NOTE: weasyprint is imported lazily inside generate_pdf() to avoid
+# module-level crashes on Streamlit Cloud when system libs are not yet loaded.
 
 
 logger = logging.getLogger(__name__)
@@ -21,6 +21,10 @@ class PDFGenerator:
     def generate_pdf(self, questions: List[Dict], start_date: str, end_date: str) -> str:
         """Generate detailed PDF using WeasyPrint with proper word wrapping"""
         try:
+            # Lazy imports — avoids module-level crash when system libs are missing
+            from weasyprint import HTML, CSS
+            from weasyprint.text.fonts import FontConfiguration
+
             filename = "current_affairs_detailed.pdf"
             filepath = os.path.join(self.output_dir, filename)
             
