@@ -12,3 +12,5 @@ libcairo2
 libffi-dev
 shared-mime-info
 fonts-dejavu-core
+libgirepository1.0-dev
+weasyprint
