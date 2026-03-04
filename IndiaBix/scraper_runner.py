@@ -22,7 +22,80 @@ from translator import translate_questions_with_ai
 # on Streamlit Cloud when weasyprint system libs are not installed at import time.
 
 
-# ── Logging helper that forwards to a callback ─────────────────────────────────
+# ── ReportLab fallback PDF (works without any system C libraries) ──────────────
+def _generate_pdf_reportlab(questions: list, date_str: str, output_dir: str) -> str:
+    """Generate a clean, readable PDF using pure-Python reportlab as fallback."""
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.lib.units import cm
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, HRFlowable
+    from reportlab.lib.enums import TA_LEFT, TA_CENTER
+
+    os.makedirs(output_dir, exist_ok=True)
+    filepath = os.path.join(output_dir, "current_affairs_detailed.pdf")
+
+    doc = SimpleDocTemplate(
+        filepath,
+        pagesize=A4,
+        rightMargin=2 * cm,
+        leftMargin=2 * cm,
+        topMargin=2 * cm,
+        bottomMargin=2 * cm,
+    )
+
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle(
+        "title", parent=styles["Title"],
+        fontSize=18, spaceAfter=6, textColor=colors.HexColor("#1a1a2e"), alignment=TA_CENTER
+    )
+    sub_style = ParagraphStyle(
+        "sub", parent=styles["Normal"],
+        fontSize=11, spaceAfter=12, textColor=colors.HexColor("#555555"), alignment=TA_CENTER
+    )
+    q_style = ParagraphStyle(
+        "question", parent=styles["Normal"],
+        fontSize=11, spaceAfter=4, leading=16, textColor=colors.HexColor("#1a1a2e")
+    )
+    opt_style = ParagraphStyle(
+        "option", parent=styles["Normal"],
+        fontSize=10, spaceAfter=2, leftIndent=20, leading=14, textColor=colors.HexColor("#333333")
+    )
+    ans_style = ParagraphStyle(
+        "answer", parent=styles["Normal"],
+        fontSize=10, spaceAfter=6, leftIndent=20, leading=14,
+        textColor=colors.HexColor("#008000"), fontName="Helvetica-Bold"
+    )
+
+    story = [
+        Paragraph("Pragati Setu — Current Affairs", title_style),
+        Paragraph(f"Date: {date_str} | Questions: {len(questions)}", sub_style),
+        HRFlowable(width="100%", thickness=1, color=colors.HexColor("#cccccc"), spaceAfter=12),
+    ]
+
+    for i, q in enumerate(questions, 1):
+        question_text = q.get("question_gujarati") or q.get("question", "")
+        story.append(Paragraph(f"<b>Q{i}.</b> {question_text}", q_style))
+
+        options = q.get("options_gujarati") or q.get("options", [])
+        labels = ["A", "B", "C", "D"]
+        for j, opt in enumerate(options):
+            label = labels[j] if j < len(labels) else str(j + 1)
+            story.append(Paragraph(f"{label}. {opt}", opt_style))
+
+        correct = q.get("correct_answer_gujarati") or q.get("correct_answer", "")
+        if correct:
+            story.append(Paragraph(f"✓ Answer: {correct}", ans_style))
+
+        story.append(Spacer(1, 8))
+
+        if i % 5 == 0:
+            story.append(HRFlowable(width="100%", thickness=0.5, color=colors.HexColor("#eeeeee"), spaceAfter=8))
+
+    doc.build(story)
+    return filepath
+
+
 class CallbackHandler(logging.Handler):
     """Sends every log record to a caller-supplied callback(str)."""
 
@@ -136,42 +209,50 @@ def run_pipeline(
 
         # ── 4. Generate PDFs ───────────────────────────────────────────────────
         log("📄  Step 3/3 — Generating PDFs …")
-        # Lazy imports so module can be loaded without weasyprint system libs
-        from pdf_generator import PDFGenerator
-        from pdf_generator_compact import PDFGeneratorCompact
-
         watermark_path = script_dir / "pragati_setu.jpg"
         watermark = str(watermark_path) if watermark_path.exists() else None
 
-        # Detailed PDF
-        gen_detailed = PDFGenerator(
-            output_dir=str(output_dir),
-            language="gu",
-            watermark_image=watermark,
-        )
-        pdf_detailed = gen_detailed.generate_pdf(
-            questions_gu,
-            start_date=date_str,
-            end_date=date_str,
-        )
-        if pdf_detailed:
-            result["pdf_detailed"] = pdf_detailed
-            log(f"✅  Detailed PDF → {Path(pdf_detailed).name}")
+        # Try WeasyPrint first; fall back to ReportLab if system libs missing
+        try:
+            from pdf_generator import PDFGenerator
+            from pdf_generator_compact import PDFGeneratorCompact
 
-        # Compact PDF
-        gen_compact = PDFGeneratorCompact(
-            output_dir=str(output_dir),
-            language="gu",
-            watermark_image=watermark,
-        )
-        pdf_compact = gen_compact.generate_pdf(
-            questions_gu,
-            start_date=date_str,
-            end_date=date_str,
-        )
-        if pdf_compact:
-            result["pdf_compact"] = pdf_compact
-            log(f"✅  Compact PDF  → {Path(pdf_compact).name}")
+            gen_detailed = PDFGenerator(
+                output_dir=str(output_dir),
+                language="gu",
+                watermark_image=watermark,
+            )
+            pdf_detailed = gen_detailed.generate_pdf(
+                questions_gu, start_date=date_str, end_date=date_str
+            )
+            if pdf_detailed:
+                result["pdf_detailed"] = pdf_detailed
+                log(f"✅  Detailed PDF → {Path(pdf_detailed).name}")
+
+            gen_compact = PDFGeneratorCompact(
+                output_dir=str(output_dir),
+                language="gu",
+                watermark_image=watermark,
+            )
+            pdf_compact = gen_compact.generate_pdf(
+                questions_gu, start_date=date_str, end_date=date_str
+            )
+            if pdf_compact:
+                result["pdf_compact"] = pdf_compact
+                log(f"✅  Compact PDF  → {Path(pdf_compact).name}")
+
+        except Exception as pdf_exc:
+            log(f"⚠️  WeasyPrint unavailable ({pdf_exc.__class__.__name__}: {pdf_exc}). Using ReportLab fallback …")
+            try:
+                _pdf_path = _generate_pdf_reportlab(
+                    questions_gu, date_str, str(output_dir)
+                )
+                result["pdf_detailed"] = _pdf_path
+                result["pdf_compact"] = _pdf_path
+                log(f"✅  PDF (ReportLab) → {Path(_pdf_path).name}")
+            except Exception as rl_exc:
+                log(f"❌  ReportLab also failed: {rl_exc}")
+
 
         # ── Done ───────────────────────────────────────────────────────────────
         log("─" * 50)
