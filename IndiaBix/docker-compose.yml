@@ -18,6 +18,11 @@ services:
     # Generated PDFs will appear in IndiaBix/output/ on your computer.
     volumes:
       - ./output:/app/output
+      - ./pragati_setu.jpg:/app/pragati_setu.jpg
+
+    # Map the Streamlit port to the host machine
+    ports:
+      - "8501:8501"
 
     # Load environment variables from .env file (API keys etc.)
     # Won't fail if .env doesn't exist

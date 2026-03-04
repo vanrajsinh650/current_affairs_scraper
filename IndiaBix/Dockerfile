@@ -31,9 +31,7 @@ RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
 # Copy application source files
-COPY config.py scraper.py translator.py main.py ./
-COPY pdf_generator.py pdf_generator_compact.py ./
-COPY pragati_setu.jpg .
+COPY . .
 
 # Create output directory — will be mounted as a volume at runtime
 RUN mkdir -p /app/output
@@ -42,5 +40,8 @@ RUN mkdir -p /app/output
 RUN useradd -m scraper && chown -R scraper:scraper /app
 USER scraper
 
-# Run the scraper when container starts
-CMD ["python", "main.py"]
+# Expose Streamlit port
+EXPOSE 8501
+
+# Run the streamlit app when container starts
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
