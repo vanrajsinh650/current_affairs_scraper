@@ -9,4 +9,4 @@ libcairo2
 libffi-dev
 shared-mime-info
 fonts-dejavu-core
-fonts-gujarati
+fonts-gujr

@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libffi-dev \
     shared-mime-info \
     fonts-dejavu-core \
-    fonts-gujarati \
+    fonts-gujr \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
