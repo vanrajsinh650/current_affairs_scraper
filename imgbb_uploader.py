@@ -1,13 +1,17 @@
 import requests
+import os
+from dotenv import load_dotenv
 
-def upload_url_to_imagebb(image_rul):
+load_dotenv()
+
+def upload_url_to_imagebb(image_url):
     print("Uploading image in imageBB...")
 
-    IMGBB_API_KEY = "YOUR_IMGBB_API_KEY"
+    IMGBB_API_KEY = os.getenv("IMAGEBB_API_KEY")
 
     payload = {
         "key": IMGBB_API_KEY,
-        "image": image_rul
+        "image": image_url
     }
 
     try:
