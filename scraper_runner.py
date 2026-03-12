@@ -1,5 +1,3 @@
-import os
-import sys
 import json
 import logging
 import traceback
@@ -29,7 +27,7 @@ class CallbackHandler(logging.Handler):
             pass
 
 
-# ── Main runner ─────────────────────────────────────────────────────────────────
+# Main runner 
 def run_pipeline(
     date_obj: datetime,
     log_callback: Optional[Callable[[str], None]] = None,
@@ -69,7 +67,7 @@ def run_pipeline(
         log(f"selected date : {date_str}")
         log("─" * 50)
 
-        # 1. scrape
+        # scrape
         log("step 1/3 — scraping indiabix...")
         session = create_session()
         questions_en = scrape_date_wise(date_obj, session)
@@ -82,13 +80,13 @@ def run_pipeline(
         log(f"scraped {len(questions_en)} questions")
         result["questions_count"] = len(questions_en)
 
-        # 2. translate
+        # translate
         log("step 2/3 — translating to gujarati (ai)...")
         log("this may take a few minutes...")
         questions_gu = translate_questions_with_ai(questions_en)
         log(f"translation complete — {len(questions_gu)} questions ready")
 
-        # 3. save jsons
+        # save jsons
         script_dir = Path(__file__).parent
         output_dir = script_dir / "output"
         output_dir.mkdir(exist_ok=True)
@@ -103,10 +101,27 @@ def run_pipeline(
 
         result["json_english"] = str(json_en_path)
         result["json_gujarati"] = str(json_gu_path)
-        log(f"💾  json files saved to output/")
+        log(f"json files saved to output/")
 
-        # 4. generate pdfs
-        log("📄  step 3/3 — generating pdfs...")
+        # generate images
+        try:
+            log("generating images for questions...")
+            base64_images = get_ai_image_url(questions_gu)
+            if base64_images:
+                permanent_urls = upload_image_to_imgbb(base64_images)
+                if permanent_urls:
+                    link_path = output_dir / "image_links.txt"
+                    link_path.write_text("\n".join(permanent_urls), encoding="utf-8")
+                    log(f"images uploaded to imgbb, links saved to {link_path.name}")
+                else:
+                    log("image upload failed, skipping image links")
+            else:
+                log("image generation failed, skipping images")
+        except Exception as img_exc:
+            log(f"image generation/upload failed: {img_exc}")
+
+        # generate pdfs
+        log("step 3/3 — generating pdfs...")
         watermark_path = script_dir / "pragati_setu.jpg"
         watermark = str(watermark_path) if watermark_path.exists() else None
 
@@ -140,8 +155,6 @@ def run_pipeline(
         except Exception as pdf_exc:
             log(f"pdf generation failed: {pdf_exc}")
 
-
-
         # done
         log("─" * 50)
         log(f"pipeline complete!  {len(questions_gu)} questions processed.")
@@ -160,5 +173,7 @@ def run_pipeline(
         for h in old_handlers:
             if h not in root_logger.handlers:
                 root_logger.addHandler(h)
+
+    root_logger.addHandler(CallbackHandler(log_callback))
 
     return result
