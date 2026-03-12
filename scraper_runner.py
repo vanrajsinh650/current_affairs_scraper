@@ -1,24 +1,19 @@
-"""
-scraper_runner.py
-pipeline helper used by app.py.
-takes a datetime object and runs:
-1. scrape -> 2. translate -> 3. generate pdfs and save json
-streams log lines via a callback so the ui can display live progress.
-"""
-
 import os
 import sys
 import json
 import logging
+import traceback
 from datetime import datetime
 from pathlib import Path
 from typing import Callable, Optional
-
 from scraper import scrape_date_wise, create_session
 from translator import translate_questions_with_ai
-
-# note: weasyprint is imported lazily inside run_pipeline() to avoid crashes
-# on streamlit cloud when system libs are missing at import time.
+from image_generator import get_ai_image_url
+from imgbb_uploader import upload_image_to_imgbb
+from pdf_generator import PDFGenerator
+from pdf_generator_compact import PDFGeneratorCompact
+from scraper import scrape_date_wise, create_session
+from translator import translate_questions_with_ai
 
 class CallbackHandler(logging.Handler):
     """sends every log record to a callback(str)."""
@@ -39,27 +34,6 @@ def run_pipeline(
     date_obj: datetime,
     log_callback: Optional[Callable[[str], None]] = None,
 ) -> dict:
-    """
-    Run the full scrape → translate → PDF pipeline for a single date.
-
-    Parameters
-    ----------
-    date_obj     : datetime – the date to scrape
-    log_callback : callable(str) – receives each log/print line in real time
-
-    Returns
-    -------
-    dict with keys:
-        success          : bool
-        questions_count  : int
-        date             : str  (YYYY-MM-DD)
-        pdf_detailed     : str | None  (absolute path)
-        pdf_compact      : str | None  (absolute path)
-        json_english     : str | None  (absolute path)
-        json_gujarati    : str | None  (absolute path)
-        error            : str | None
-    """
-
     result = {
         "success": False,
         "questions_count": 0,
@@ -92,27 +66,27 @@ def run_pipeline(
 
     try:
         date_str = date_obj.strftime("%Y-%m-%d")
-        log(f"📅  selected date : {date_str}")
+        log(f"selected date : {date_str}")
         log("─" * 50)
 
         # 1. scrape
-        log("🔍  step 1/3 — scraping indiabix...")
+        log("step 1/3 — scraping indiabix...")
         session = create_session()
         questions_en = scrape_date_wise(date_obj, session)
 
         if not questions_en:
             result["error"] = f"no questions found for {date_str}. the page may not exist yet."
-            log(f"❌  {result['error']}")
+            log(f"{result['error']}")
             return result
 
-        log(f"✅  scraped {len(questions_en)} questions")
+        log(f"scraped {len(questions_en)} questions")
         result["questions_count"] = len(questions_en)
 
         # 2. translate
-        log("🌐  step 2/3 — translating to gujarati (ai)...")
-        log("    this may take a few minutes...")
+        log("step 2/3 — translating to gujarati (ai)...")
+        log("this may take a few minutes...")
         questions_gu = translate_questions_with_ai(questions_en)
-        log(f"✅  translation complete — {len(questions_gu)} questions ready")
+        log(f"translation complete — {len(questions_gu)} questions ready")
 
         # 3. save jsons
         script_dir = Path(__file__).parent
@@ -150,7 +124,7 @@ def run_pipeline(
             )
             if pdf_detailed:
                 result["pdf_detailed"] = pdf_detailed
-                log(f"✅  detailed pdf -> {Path(pdf_detailed).name}")
+                log(f"detailed pdf -> {Path(pdf_detailed).name}")
 
             # compact pdf
             gen_compact = PDFGeneratorCompact(
@@ -161,21 +135,21 @@ def run_pipeline(
             )
             if pdf_compact:
                 result["pdf_compact"] = pdf_compact
-                log(f"✅  compact pdf  -> {Path(pdf_compact).name}")
+                log(f"compact pdf  -> {Path(pdf_compact).name}")
 
         except Exception as pdf_exc:
-            log(f"❌  pdf generation failed: {pdf_exc}")
+            log(f"pdf generation failed: {pdf_exc}")
 
 
 
         # done
         log("─" * 50)
-        log(f"🎉  pipeline complete!  {len(questions_gu)} questions processed.")
+        log(f"pipeline complete!  {len(questions_gu)} questions processed.")
         result["success"] = True
 
     except Exception as exc:
         result["error"] = str(exc)
-        log(f"❌  Error: {exc}")
+        log(f"Error: {exc}")
 
     finally:
         # Restore original logger handlers

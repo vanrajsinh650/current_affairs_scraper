@@ -4,14 +4,15 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-def upload_url_to_imagebb(image_url):
+def upload_url_to_imagebb(base64_or_image_url: str) -> str | None:
     print("Uploading image in imageBB...")
+
 
     IMGBB_API_KEY = os.getenv("IMAGEBB_API_KEY")
 
     payload = {
         "key": IMGBB_API_KEY,
-        "image": image_url
+        "image": base64_or_image_url
     }
 
     try:

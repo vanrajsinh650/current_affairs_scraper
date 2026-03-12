@@ -1,5 +1,6 @@
 import base64
 
+from narwhals import Time
 import requests
 import urllib.parse
 import os
@@ -52,18 +53,28 @@ def get_ai_image_url(Gujarati_questions_list):
     headers = {"Authorization": f"Bearer {os.getenv('HUGGINGFACE_API_KEY')}"}
 
     print(f"generating image using huggingface (FLUX.1)...")
-
+    max_retries = 3
+    payload = {"inputs": final_prompt}
     try:
-        response = requests.post(API_URL, headers=headers, json={"inputs": final_prompt})
+        for attempt in range(1, max_retries + 1):
+            response = requests.post(API_URL, headers=headers, json=payload, timeout=120)
 
-        if response.status_code == 200:
-            image_bytes = response.content
-            base64_encoded_image = base64.b64encode(image_bytes).decode('utf-8')
-            print("Image generated successfully.")
-            return base64_encoded_image
-        else:
-            print(f"Failed to generate image. Status code: {response.status_code}, Response: {response.text}")
-            return None
+            if response.status_code == 200:
+                return response.content
+            
+            elif response.status_code in [503, 504]:
+                data = response.json()
+                wait_time = min(float(data.get("estimated_time", 20)), 60)
+                print(f"Model is loading {wait_time}s ... (Attempt {attempt}/{max_retries})")
+                Time.sleep(wait_time)
+
+            elif response.status_code == 429:
+                print(f"Rate limit hit. Waiting for 60s before retrying... (Attempt {attempt}/{max_retries})")
+                Time.sleep(60)
+
+            else:
+                print(f"Failed to generate image. Status code: {response.status_code}, Response: {response.text}")
+                return None
 
     except Exception as e:
         print(f"Error generating image: {e}")
