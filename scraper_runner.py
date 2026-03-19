@@ -3,7 +3,7 @@ import logging
 import traceback
 from datetime import datetime
 from pathlib import Path
-from typing import Callable, Optional
+from typing import Callable, Optional, cast
 from scraper import IndiabixScraper
 from translator import translate_questions_with_ai
 from pdf_generator import PDFGenerator
@@ -36,18 +36,19 @@ class ScrapingPipeline:
         # Prevent propagation to root logger just for this pipeline execution
         self.logger.propagate = False
         
-        self.cb_handler = None
+        self.cb_handler: Optional[CallbackHandler] = None
         if log_callback:
             # Clear existing handlers first
             self.logger.handlers.clear()
             self.cb_handler = CallbackHandler(log_callback)
-            self.cb_handler.setFormatter(logging.Formatter("%(levelname)s  %(message)s"))
-            self.logger.addHandler(self.cb_handler)
+            handler = cast(logging.Handler, self.cb_handler)
+            handler.setFormatter(logging.Formatter("%(levelname)s  %(message)s"))
+            self.logger.addHandler(handler)
             
             # Also attach it to the scraper logger so we see scraper logs
             scraper_logger = logging.getLogger("scraper")
             scraper_logger.handlers.clear()
-            scraper_logger.addHandler(self.cb_handler)
+            scraper_logger.addHandler(handler)
             scraper_logger.propagate = False
 
     def log(self, msg: str):
@@ -79,7 +80,7 @@ class ScrapingPipeline:
 
             if not questions_en:
                 result["error"] = f"no questions found for {date_str}. the page may not exist yet."
-                self.log(result["error"])
+                self.log(str(result["error"]))
                 return result
 
             self.log(f"scraped {len(questions_en)} questions")
@@ -156,18 +157,45 @@ class ScrapingPipeline:
         finally:
             # Clean up handlers
             if self.cb_handler:
-                self.logger.removeHandler(self.cb_handler)
+                clean_handler = cast(logging.Handler, self.cb_handler)
+                self.logger.removeHandler(clean_handler)
                 scraper_logger = logging.getLogger("scraper")
-                scraper_logger.removeHandler(self.cb_handler)
+                scraper_logger.removeHandler(clean_handler)
 
         return result
 
 
-# Backwards compatible wrapper for app.py
+# Backwards compatible wrapper for app.py with Smart Lookback
 def run_pipeline(
     date_obj: datetime,
     log_callback: Optional[Callable[[str], None]] = None,
+    lookback_days: int = 5
 ) -> dict:
+    import datetime as dt
     scraper = IndiabixScraper()
     pipeline = ScrapingPipeline(scraper=scraper, log_callback=log_callback)
-    return pipeline.run(date_obj)
+    
+    # Try the initial date
+    result = pipeline.run(date_obj)
+    
+    # Smart Lookback: If no questions found, try previous days
+    if not result.get("success") and "no questions found" in str(result.get("error", "")).lower():
+        pipeline.log(f"Smart Lookback: No questions on {date_obj.strftime('%Y-%m-%d')}. Searching previous days...")
+        
+        current_date = date_obj
+        for i in range(1, lookback_days + 1):
+            current_date = current_date - dt.timedelta(days=1)
+            pipeline.log(f"Checking {current_date.strftime('%Y-%m-%d')} (Lookback {i}/{lookback_days})...")
+            
+            # Reset pipeline log handlers for the new run if needed (though they should stay attached)
+            new_result = pipeline.run(current_date)
+            
+            if new_result.get("success"):
+                pipeline.log(f"✓ Found latest questions from {current_date.strftime('%Y-%m-%d')}!")
+                return new_result
+            
+            # If it's a real error (not just empty), stop
+            if "no questions found" not in str(new_result.get("error", "")).lower():
+                return new_result
+                
+    return result
