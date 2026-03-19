@@ -30,5 +30,5 @@ services:
       - path: .env
         required: false
 
-    # 'no' = run once and stop (good for a scraper)
-    restart: "no"
+    # 'always' = restart if the app crashes (best for production)
+    restart: "always"

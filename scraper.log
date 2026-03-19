@@ -2264,3 +2264,12 @@
 2026-03-19 22:54:35,030 - DEBUG - Took 0.001s to prune 'name'
 2026-03-19 22:54:35,030 - INFO - name pruned
 2026-03-19 22:54:35,041 - INFO - Compact PDF generated successfully: /home/vanrajsinh/Projects/current_affairs_scraper/output/current_affairs_compact.pdf
+2026-03-19 22:58:55,600 - INFO - ============================================================
+2026-03-19 22:58:55,600 - INFO - indiabix current affairs scraper - ai translation
+2026-03-19 22:58:55,600 - INFO - ============================================================
+2026-03-19 22:58:55,600 - INFO - date range: 2026-03-19 to 2026-03-19 (1 days)
+2026-03-19 22:58:55,600 - INFO - scraping questions...
+2026-03-19 22:58:55,601 - INFO - scraping for date: 2026-03-19
+2026-03-19 22:58:55,601 - INFO - fetching: https://www.indiabix.com/current-affairs/2026-03-19/
+2026-03-19 22:59:26,142 - INFO - successfully fetched: https://www.indiabix.com/current-affairs/2026-03-19/
+2026-03-19 22:59:26,149 - WARNING - no question blocks found on page
