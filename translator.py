@@ -3,14 +3,97 @@ import logging
 import os
 import re
 import time
+import socket
 from deep_translator import GoogleTranslator
 from dotenv import load_dotenv
+from groq import Groq
+
+# Monkeypatch requests to enforce a timeout globally for deep-translator
+import requests
+_orig_get = requests.get
+def _timeout_get(*args, **kwargs):
+    if 'timeout' not in kwargs:
+        kwargs['timeout'] = 5
+    return _orig_get(*args, **kwargs)
+requests.get = _timeout_get
 
 load_dotenv()
 logger = logging.getLogger(__name__)
 
+class GroqTranslator:
+    """Translation using Groq LLM (much faster and more reliable than Google Translate)"""
+    
+    def __init__(self):
+        self.api_key = os.getenv("GROQ_API_KEY")
+        if not self.api_key:
+            self.client = None
+            logger.warning("GROQ_API_KEY not found in environment")
+            return
+            
+        try:
+            self.client = Groq(api_key=self.api_key)
+            logger.info("✓ Groq Translator Ready")
+        except Exception as e:
+            logger.error(f"Failed to initialize Groq: {e}")
+            self.client = None
+
+    def translate_batch(self, questions: list) -> list:
+        """Translate all questions in batches for speed and context"""
+        if not self.client:
+            return None
+
+        translated = []
+        total = len(questions)
+        
+        # We can translate questions one by one or in small batches
+        # For simplicity and to avoid context window issues, we'll do one by one but without delays
+        for i, q in enumerate(questions, 1):
+            print(f"Translating Q{i}/{total} with Groq...", end=" ", flush=True)
+            try:
+                # Prepare a structured prompt for the LLM
+                prompt = f"""
+                Translate the following Current Affairs question from English to Gujarati.
+                Maintain professional educational terminology.
+                
+                Question: {q.get('question', '')}
+                Options: {", ".join(q.get('options', []))}
+                Correct Answer: {q.get('answer', '')}
+                Explanation: {q.get('explanation', '')}
+                
+                Return ONLY a JSON object with keys: "question", "options" (list), "answer", "explanation".
+                Do not include any conversational text.
+                """
+                
+                response = self.client.chat.completions.create(
+                    messages=[
+                        {"role": "system", "content": "You are a professional English-to-Gujarati translator specializing in competitive exam content."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    model="llama-3.3-70b-versatile", # High quality, fast model
+                    response_format={"type": "json_object"}
+                )
+                
+                result = json.loads(response.choices[0].message.content)
+                
+                t_q = q.copy()
+                t_q.update({
+                    "question": result.get("question", q["question"]),
+                    "options": result.get("options", q["options"]),
+                    "answer": result.get("answer", q["answer"]),
+                    "explanation": result.get("explanation", q["explanation"]),
+                })
+                translated.append(t_q)
+                print("DONE!")
+                
+            except Exception as e:
+                logger.error(f"Groq translation failed for Q{i}: {e}")
+                print(f"FAILED (using English)")
+                translated.append(q)
+                
+        return translated
+
 class ImprovedGujaratiTranslator:
-    """Enhanced Google Translator with pre/post-processing"""
+    """Enhanced Google Translator with pre/post-processing (Fallback)"""
     
     def __init__(self):
         try:
@@ -77,7 +160,7 @@ class ImprovedGujaratiTranslator:
         
         return gujarati
     
-    def translate_text(self, text: str, max_retries: int = 3) -> str:
+    def translate_text(self, text: str, max_retries: int = 1) -> str:
         """Translate with pre/post processing"""
         if not text or not text.strip():
             return text
@@ -103,7 +186,7 @@ class ImprovedGujaratiTranslator:
                 logger.warning(f"Attempt {attempt + 1} failed: {e}")
                 if attempt == max_retries - 1:
                     return text
-                time.sleep(1)
+                time.sleep(2 ** attempt)
         
         return text
     
@@ -161,7 +244,7 @@ class ImprovedGujaratiTranslator:
         translated = []
         total = len(questions)
         
-        print(f"Translating {total} questions with preprocessing...")
+        print(f"Translating {total} questions with Google Translate...")
         
         for i, q in enumerate(questions, 1):
             print(f"Q{i}/{total}...", end=" ", flush=True)
@@ -176,35 +259,65 @@ def save_questions_json(questions: list, filename: str):
     filepath = os.path.join("output", filename)
     with open(filepath, 'w', encoding='utf-8') as f:
         json.dump(questions, f, indent=2, ensure_ascii=False)
-    print(f"{filename}")
     return filepath
 
 def translate_questions_with_ai(questions: list) -> list:
-    print(f"\nEnhanced Google Translate (with Pre/Post Processing)")
+    """Translate questions trying Google first, with Groq as a high-quality fallback"""
     start = time.time()
     
-    print("\nSaving English...")
+    logger.info("Saving English JSON...")
     save_questions_json(questions, "questions_english.json")
     
-    print("\nTranslating to Gujarati...")
-    translator = ImprovedGujaratiTranslator()
+    # Initialize both translators
+    google_translator = ImprovedGujaratiTranslator()
+    groq_translator = GroqTranslator()
     
-    if not translator.translator:
-        save_questions_json(questions, "questions_gujarati.json")
-        return questions
+    translated = []
+    total = len(questions)
     
-    gujarati = translator.translate_all(questions)
+    logger.info(f"Translating {total} questions (Google -> Groq Fallback)...")
     
-    print("\nSaving Gujarati...")
-    save_questions_json(gujarati, "questions_gujarati.json")
+    for i, q in enumerate(questions, 1):
+        logger.info(f"Translating Q{i}/{total}...")
+        q_translated = None
+        
+        # 1. Try Google first
+        if google_translator.translator:
+            try:
+                # If Google succeeds and actually translates (doesn't return original text), use it.
+                cand = google_translator.translate_question(q, i)
+                if cand['question'] != q['question']:
+                    q_translated = cand
+                    logger.info(f"✓ Q{i} translated by Google")
+            except Exception as e:
+                logger.warning(f"Google failed for Q{i}: {e}")
+
+        # 2. Fallback to Groq if Google failed or didn't translate
+        if not q_translated and groq_translator.client:
+            try:
+                # Translate THIS single question with Groq
+                cand = groq_translator.translate_batch([q])[0]
+                if cand['question'] != q['question']:
+                    q_translated = cand
+                    logger.info(f"✓ Q{i} translated by Groq (Fallback)")
+            except Exception as e:
+                logger.error(f"Groq fallback failed for Q{i}: {e}")
+
+        # 3. Last fallback: Keep English
+        if not q_translated:
+            q_translated = q
+            logger.warning(f"⚠ Q{i} kept in English (All translators failed)")
+            
+        translated.append(q_translated)
+        
+        # Small delay to prevent rate limits
+        if i < total:
+            time.sleep(0.5)
+    
+    logger.info("Saving Gujarati JSON...")
+    save_questions_json(translated, "questions_gujarati.json")
     
     elapsed = time.time() - start
-    print(f"\nDone in {elapsed:.0f}s")
+    logger.info(f"Translation complete in {elapsed:.0f}s")
     
-    # Show comparison
-    if gujarati and len(gujarati) > 0:
-        print("\nSample Translation:")
-        print(f"EN: {questions[0]['question'][:70]}...")
-        print(f"GU: {gujarati[0]['question'][:70]}...")
-    
-    return gujarati
+    return translated
