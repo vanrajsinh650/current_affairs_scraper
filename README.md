@@ -1,6 +1,6 @@
-# Pragati Setu: Professional Current Affairs Extraction & Publishing Suite
+# AffairCore: Professional Current Affairs Extraction & Publishing Suite
 
-Pragati Setu is a high-performance intelligence extraction engine designed to automate the lifecycle of educational content-from raw web scraping to multilingual translation and professional PDF publishing. Built for researchers, educators, and content creators, it provides a seamless bridge between English-source data and Gujarati-speaking audiences.
+AffairCore is a high-performance intelligence extraction engine designed to automate the lifecycle of educational content-from raw web scraping to multilingual translation and professional PDF publishing. Built for researchers, educators, and content creators, it provides a seamless bridge between English-source data and Gujarati-speaking audiences.
 
 ---
 
@@ -27,7 +27,7 @@ Generating high-fidelity PDFs in Indic scripts (Gujarati) is notoriously difficu
 
 - **The Solution**: We abandoned legacy engines (ReportLab) in favor of **WeasyPrint**, utilizing the **Pango** layout engine for pixel-perfect Gujarati conjunct rendering.
 - **Typography**: Optimized using `Noto Sans Gujarati` and `Lohit Gujarati` for maximum readability.
-- **Branding**: Dynamic, low-opacity (10%) watermarking integrated directly into the PDF layout via CSS-fixed-positioning.
+- **Branding**: Dynamic, low-opacity (10%) watermarking integrated directly into the PDF layout via CSS-fixed-positioning. (Utilizing the **Pragati Setu** brand assets).
 
 ---
 
@@ -38,18 +38,18 @@ The Pragati Setu Suite is designed for maximum portability. Choose the method th
 ### 🌐 Live Dashboard
 
 Access the production-grade application instantly via Streamlit Cloud:
-**[Launch Pragati Setu](https://pragatisetucurrentaffairsjson.streamlit.app/)**
+**[Launch AffairCore (Pragati Setu)](https://pragatisetucurrentaffairsjson.streamlit.app/)**
 
 ---
 
 ### Option A: Production-Grade Containerization (Docker)
 
-The most reliable way to deploy Pragati Setu, ensuring all system-level fonts and dependencies are correctly mapped regardless of your host OS.
+The most reliable way to deploy AffairCore, ensuring all system-level fonts and dependencies are correctly mapped regardless of your host OS.
 
 ```bash
 # Clone the repository
 git clone [repository-url]
-cd current_affairs_scraper
+cd AffairCore
 
 # Deploy using Docker Compose
 docker-compose up -d --build
@@ -102,14 +102,14 @@ pip install -r requirements.txt
 ## 🛠️ Project Ecosystem
 
 ```text
-current_affairs_scraper/
+AffairCore/
 ├── app.py                 # Premium Streamlit GUI Dashboard
 ├── n8n_trigger.py         # Automation Server (webhook endpoint)
 ├── scraper_runner.py      # Orchestration Pipeline
 ├── translator.py          # Dual-Layer Translation Logic
 ├── pdf_generator.py       # Pango-powered PDF Engine
 ├── config.py              # Global Environment Parameters
-├── pragati_setu.jpg       # High-Resolution Brand Asset
+├── pragati_setu.jpg       # High-Resolution Brand Asset (Pragati Setu)
 └── output/                # Intelligence Artifacts (JSON/PDF)
 ```
 
@@ -117,7 +117,7 @@ current_affairs_scraper/
 
 ## 🤖 Automation Workflow (n8n Integration)
 
-Pragati Setu is designed for zero-touch automation using **n8n**. The system provides a dedicated trigger server (`n8n_trigger.py`) that handles the heavy lifting, allowing n8n to orchestrate the final data delivery.
+AffairCore is designed for zero-touch automation using **n8n**. The system provides a dedicated trigger server (`n8n_trigger.py`) that handles the heavy lifting, allowing n8n to orchestrate the final data delivery.
 
 ### 1. Start the Automation Trigger
 
