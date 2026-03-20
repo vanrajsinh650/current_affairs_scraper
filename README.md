@@ -25,10 +25,18 @@ Generating high-fidelity PDFs in Indic scripts (Gujarati) is notoriously difficu
 
 ---
 
-## 🚀 Deployment & Installation
+## 🚀 Quick Deployment & Installation
+
+The Pragati Setu Suite is designed for maximum portability. Choose the method that fits your environment.
+
+### 🌐 Live Dashboard
+Access the production-grade application instantly via Streamlit Cloud:
+**[Launch Pragati Setu](https://pragatisetucurrentaffairsjson.streamlit.app/)**
+
+---
 
 ### Option A: Production-Grade Containerization (Docker)
-The most reliable way to deploy Pragati Setu, ensuring all system-level fonts and dependencies are correctly mapped.
+The most reliable way to deploy Pragati Setu, ensuring all system-level fonts and dependencies are correctly mapped regardless of your host OS.
 
 ```bash
 # Clone the repository
@@ -38,21 +46,37 @@ cd current_affairs_scraper
 # Deploy using Docker Compose
 docker-compose up -d --build
 ```
-*The Streamlit dashboard will be live at `http://localhost:8501`.*
+*The logic will be live at `http://localhost:8501`.*
+
+---
 
 ### Option B: Manual Virtual Environment Setup
-For local development or lightweight testing.
+For local development and specialized OS environments.
 
-**1. System Dependencies (Linux/Debian):**
+#### 🐧 Linux (Ubuntu/Debian)
+Ensure you have the required fonts and Pango rendering libraries installed:
 ```bash
 sudo apt-get update
 sudo apt-get install -y libpango-1.0-0 libharfbuzz0b libpangocairo-1.0-0 fonts-noto-core fonts-lohit-gujr
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
 ```
 
-**2. Python Environment:**
+#### 🍎 macOS
+Use Homebrew to install the rendering engine dependencies:
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
+brew install pango libffi
+python3 -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+#### 🪟 Windows
+Windows requires the **GTK3 runtime** for WeasyPrint to function correctly.
+1. Download and install the [GTK for Windows Runtime](https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases).
+2. Open PowerShell and run:
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
